@@ -85,3 +85,4 @@ export * from "./generic-design-preview-new"
 // Layout Components - Extended
 export * from "./collapsible-sidebar"
 export * from "./settings-page"
+export * from "./login-page"

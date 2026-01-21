@@ -3,7 +3,7 @@
 import * as React from "react"
 import * as SelectPrimitive from "@radix-ui/react-select"
 import { Check, ChevronDown, ChevronUp } from "lucide-react"
-import anime from "animejs"
+import { animate } from "animejs"
 import { cn } from "../../../lib/utils"
 
 /**
@@ -87,8 +87,7 @@ const SelectContent = React.forwardRef<
 
   React.useEffect(() => {
     if (contentRef.current) {
-      anime({
-        targets: contentRef.current,
+      animate(contentRef.current, {
         opacity: [0, 1],
         translateY: [-8, 0],
         duration: 200,

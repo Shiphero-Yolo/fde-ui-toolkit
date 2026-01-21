@@ -3,7 +3,7 @@
 import * as React from "react"
 import * as RadioGroupPrimitive from "@radix-ui/react-radio-group"
 import { Circle } from "lucide-react"
-import anime from "animejs"
+import { animate } from "animejs"
 import { cn } from "../../../lib/utils"
 
 /**
@@ -14,8 +14,7 @@ const AnimatedRadioIndicator = () => {
 
   React.useEffect(() => {
     if (iconRef.current) {
-      anime({
-        targets: iconRef.current,
+      animate(iconRef.current, {
         scale: [0, 1.2, 1],
         opacity: [0, 1],
         duration: 200,

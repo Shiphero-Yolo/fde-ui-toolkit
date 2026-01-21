@@ -169,8 +169,9 @@ import {
   SettingsPage,
   SettingsCard,
   ShipHeroCard,
+  LoginPage,
 } from "@/components/ui"
-import { AlertCircle, CheckCircle2, Copy, Check, Sun, Moon, ChevronDown, ChevronsUpDown, Bold, Italic, Underline, Calendar as CalendarIcon, Home, Settings, User, Mail, Plus, Minus, Search, ArrowUpDown, ArrowUp, ArrowDown, LayoutDashboard, Package, ShoppingCart, BarChart3, Bell, HelpCircle, LogOut, ChevronUp, PanelLeftClose, PanelLeft, Palette, Type, MousePointer, FormInput, LayoutList, Layers, MessageSquare, Grid3X3, Image as ImageIcon, SlidersHorizontal, Tag } from "lucide-react"
+import { AlertCircle, CheckCircle2, Copy, Check, Sun, Moon, ChevronDown, ChevronsUpDown, Bold, Italic, Underline, Calendar as CalendarIcon, Home, Settings, User, Mail, Plus, Minus, Search, ArrowUpDown, ArrowUp, ArrowDown, LayoutDashboard, Package, ShoppingCart, BarChart3, Bell, HelpCircle, LogOut, ChevronUp, PanelLeftClose, PanelLeft, Palette, Type, MousePointer, FormInput, LayoutList, Layers, MessageSquare, Grid3X3, Image as ImageIcon, SlidersHorizontal, Tag, LogIn } from "lucide-react"
 import Image from "next/image"
 import { z } from "zod"
 
@@ -619,6 +620,20 @@ export default function Showcase() {
     }
   }, [isDark])
 
+  // Scroll to top on initial page load
+  useEffect(() => {
+    // Disable browser's scroll restoration
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual'
+    }
+    // Force scroll to top immediately and after animations settle
+    window.scrollTo(0, 0)
+    const timers = [50, 100, 200, 500].map(delay =>
+      setTimeout(() => window.scrollTo(0, 0), delay)
+    )
+    return () => timers.forEach(clearTimeout)
+  }, [])
+
   // Header entrance animation
   useEffect(() => {
     if (titleRef.current && subtitleRef.current) {
@@ -674,7 +689,7 @@ export default function Showcase() {
 
   const scrollToSection = (sectionId: string) => {
     // Determine which tab the section belongs to
-    const layoutSections = ["dashboard-layout", "settings-layout"]
+    const layoutSections = ["dashboard-layout", "settings-layout", "login-page"]
     const targetTab = layoutSections.includes(sectionId) ? "layouts" : "components"
 
     // Switch tab if needed
@@ -728,6 +743,7 @@ export default function Showcase() {
   const layoutMenuItems = [
     { id: "dashboard-layout", label: "Dashboard", icon: LayoutDashboard },
     { id: "settings-layout", label: "Settings Page", icon: Settings },
+    { id: "login-page", label: "Login Page", icon: LogIn },
   ]
 
   return (
@@ -862,7 +878,10 @@ export default function Showcase() {
         </div>
 
         {/* Main Content Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <Tabs value={activeTab} onValueChange={(value) => {
+          setActiveTab(value)
+          window.scrollTo({ top: 0, behavior: "smooth" })
+        }} className="w-full">
           <TabsList className="grid w-full max-w-md grid-cols-2 mx-auto mb-8">
             <TabsTrigger value="components">Components</TabsTrigger>
             <TabsTrigger value="layouts">Layouts</TabsTrigger>
@@ -1938,7 +1957,7 @@ export default function Showcase() {
             </CardHeader>
             <CardContent>
               <Command className="rounded-lg border shadow-md">
-                <CommandInput placeholder="Type a command or search..." />
+                <CommandInput placeholder="Type a command or search..." autoFocus={false} />
                 <CommandList>
                   <CommandEmpty>No results found.</CommandEmpty>
                   <CommandGroup heading="Suggestions">
@@ -2698,6 +2717,38 @@ export default function Showcase() {
                     </TabsContent>
                   </Tabs>
                 </main>
+              </div>
+            </div>
+
+            {/* Login Page Layout */}
+            <div id="login-page" className="scroll-mt-6">
+              <div className="mb-6">
+                <h2 className="text-2xl font-semibold">Login Page</h2>
+                <p className="text-muted-foreground">Reusable login page layout with split-screen design on desktop and centered card on mobile.</p>
+              </div>
+              <div className="relative h-[600px] border rounded-lg overflow-hidden bg-gradient-to-br from-blue-500 to-purple-600">
+                <LoginPage
+                  contained
+                  logoSrc="/logo.svg"
+                  logoAlt="Skunkworks Logo"
+                  appName="Skunkworks"
+                  subtitle="Your business, simplified"
+                >
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="login-email">Email</Label>
+                      <Input id="login-email" type="email" placeholder="name@example.com" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="login-password">Password</Label>
+                      <Input id="login-password" type="password" placeholder="••••••••" />
+                    </div>
+                    <Button className="w-full">Sign In</Button>
+                    <div className="text-center">
+                      <a href="#" className="text-sm text-primary hover:underline">Forgot password?</a>
+                    </div>
+                  </div>
+                </LoginPage>
               </div>
             </div>
           </TabsContent>
