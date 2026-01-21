@@ -170,8 +170,9 @@ import {
   SettingsCard,
   ShipHeroCard,
   LoginPage,
+  RankedListCard,
 } from "@/components/ui"
-import { AlertCircle, CheckCircle2, Copy, Check, Sun, Moon, ChevronDown, ChevronsUpDown, Bold, Italic, Underline, Calendar as CalendarIcon, Home, Settings, User, Mail, Plus, Minus, Search, ArrowUpDown, ArrowUp, ArrowDown, LayoutDashboard, Package, ShoppingCart, BarChart3, Bell, HelpCircle, LogOut, ChevronUp, PanelLeftClose, PanelLeft, Palette, Type, MousePointer, FormInput, LayoutList, Layers, MessageSquare, Grid3X3, Image as ImageIcon, SlidersHorizontal, Tag, LogIn } from "lucide-react"
+import { AlertCircle, CheckCircle2, Copy, Check, Sun, Moon, ChevronDown, ChevronsUpDown, Bold, Italic, Underline, Calendar as CalendarIcon, Home, Settings, User, Mail, Plus, Minus, Search, ArrowUpDown, ArrowUp, ArrowDown, LayoutDashboard, Package, ShoppingCart, BarChart3, Bell, HelpCircle, LogOut, ChevronUp, PanelLeftClose, PanelLeft, Palette, Type, MousePointer, FormInput, LayoutList, Layers, MessageSquare, Grid3X3, Image as ImageIcon, SlidersHorizontal, Tag, LogIn, Trophy } from "lucide-react"
 import Image from "next/image"
 import { z } from "zod"
 
@@ -744,6 +745,7 @@ export default function Showcase() {
     { id: "dashboard-layout", label: "Dashboard", icon: LayoutDashboard },
     { id: "settings-layout", label: "Settings Page", icon: Settings },
     { id: "login-page", label: "Login Page", icon: LogIn },
+    { id: "ranked-list", label: "Ranked List", icon: Trophy },
   ]
 
   return (
@@ -2749,6 +2751,60 @@ export default function Showcase() {
                     </div>
                   </div>
                 </LoginPage>
+              </div>
+            </div>
+
+            {/* Ranked List Card */}
+            <div id="ranked-list" className="scroll-mt-6">
+              <div className="mb-6">
+                <h2 className="text-2xl font-semibold">Ranked List Card</h2>
+                <p className="text-muted-foreground">A reusable card component for displaying leaderboards, top performers, and rankings with optional medals and avatars.</p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <RankedListCard
+                  title="Top Performers"
+                  description="Best sellers this month"
+                  badgeText="This Month"
+                  items={[
+                    { id: "1", name: "Sarah Johnson", value: 156, initials: "SJ" },
+                    { id: "2", name: "Michael Chen", value: 142, initials: "MC" },
+                    { id: "3", name: "Emily Davis", value: 128, initials: "ED" },
+                    { id: "4", name: "James Wilson", value: 115, initials: "JW" },
+                    { id: "5", name: "Lisa Anderson", value: 98, initials: "LA" },
+                  ]}
+                  valueLabel="sales"
+                  showRankMedals
+                  showAvatars
+                />
+                <RankedListCard
+                  title="Team Leaderboard"
+                  description="Points earned today"
+                  badgeText="Today"
+                  items={[
+                    { id: "1", name: "Engineering", value: 2450, initials: "EN" },
+                    { id: "2", name: "Design", value: 1890, initials: "DE" },
+                    { id: "3", name: "Marketing", value: 1650, initials: "MA" },
+                    { id: "4", name: "Sales", value: 1420, initials: "SA" },
+                  ]}
+                  valueLabel="points"
+                  showRankMedals
+                  showAvatars
+                />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <RankedListCard
+                  title="Loading State"
+                  description="Shows spinner while data loads"
+                  items={[]}
+                  isLoading
+                  loadingMessage="Fetching rankings..."
+                />
+                <RankedListCard
+                  title="Empty State"
+                  description="When no data is available"
+                  items={[]}
+                  emptyMessage="No rankings available yet"
+                />
               </div>
             </div>
           </TabsContent>
