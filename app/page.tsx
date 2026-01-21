@@ -870,9 +870,10 @@ export default function Showcase() {
               {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             </Button>
             <SlipspaceLogo />
-          <h1 ref={titleRef} className="text-4xl font-bold tracking-tight mb-4 opacity-0">
+          <h1 ref={titleRef} className="text-4xl font-bold tracking-tight mb-2 opacity-0">
             Skunkworks UI
           </h1>
+          <code className="inline-block px-3 py-1 mb-4 text-sm font-mono bg-muted rounded-md border">370139c</code>
           <p ref={subtitleRef} className="text-muted-foreground text-lg max-w-2xl mx-auto opacity-0">
             A comprehensive, reusable React component library built with Radix UI,
             Tailwind CSS, and TypeScript. All components use the mandatory color palette.
@@ -1403,8 +1404,7 @@ export default function Showcase() {
 
         {/* Calendar Section */}
         <AnimatedSection className="mb-12">
-          <h2 className="text-2xl font-semibold mb-2">Calendar</h2>
-          <code className="text-xs text-muted-foreground mb-6 block">d38a916</code>
+          <h2 className="text-2xl font-semibold mb-6">Calendar</h2>
           <Card>
             <CardHeader>
               <CardTitle>Calendar Component</CardTitle>
