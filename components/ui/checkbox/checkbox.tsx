@@ -4,7 +4,7 @@ import * as React from "react"
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox"
 import { Check } from "lucide-react"
 import { animate } from "animejs"
-import { cn } from "@/lib/utils"
+import { cn } from "../../../lib/utils"
 
 /**
  * Animated check indicator

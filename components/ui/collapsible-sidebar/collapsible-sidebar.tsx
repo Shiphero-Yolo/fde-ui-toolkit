@@ -5,8 +5,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ChevronDown, ChevronRight, Menu } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+import { Badge } from "../badge";
+import { cn } from "../../../lib/utils";
 
 export interface NavSubItem {
   href: string;

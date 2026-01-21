@@ -4,7 +4,7 @@ import * as React from "react"
 import * as SelectPrimitive from "@radix-ui/react-select"
 import { Check, ChevronDown, ChevronUp } from "lucide-react"
 import { animate } from "animejs"
-import { cn } from "@/lib/utils"
+import { cn } from "../../../lib/utils"
 
 /**
  * Select component built on Radix UI Select

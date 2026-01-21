@@ -1,5 +1,5 @@
 import * as React from "react"
-import { cn } from "@/lib/utils"
+import { cn } from "../../../lib/utils"
 
 /**
  * Card component for containing content with consistent styling

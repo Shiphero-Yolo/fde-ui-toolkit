@@ -9,7 +9,7 @@ import {
   RefreshCw,
   Server,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "../button";
 import {
   Card,
   CardContent,
@@ -17,10 +17,10 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Switch } from "@/components/ui/switch";
-import { Badge } from "@/components/ui/badge";
+} from "../card";
+import { Alert, AlertDescription, AlertTitle } from "../alert";
+import { Switch } from "../switch";
+import { Badge } from "../badge";
 
 export interface ShipHeroSettings {
   shiphero_connected?: boolean;

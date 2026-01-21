@@ -8,15 +8,15 @@ import {
   ChevronsRight,
 } from "lucide-react"
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+import { cn } from "../../../lib/utils"
+import { Button } from "../button"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "../select"
 
 interface TablePaginationProps {
   pageIndex: number

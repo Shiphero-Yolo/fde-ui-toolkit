@@ -3,16 +3,16 @@
 import * as React from "react"
 import { ZoomIn, ZoomOut, RotateCcw, Download, Maximize2, Minimize2 } from "lucide-react"
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Slider } from "@/components/ui/slider"
+import { cn } from "../../../lib/utils"
+import { Button } from "../button"
+import { Skeleton } from "../skeleton"
+import { Slider } from "../slider"
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip"
+} from "../tooltip"
 
 interface GenericDesignPreviewNewProps {
   imageUrl?: string

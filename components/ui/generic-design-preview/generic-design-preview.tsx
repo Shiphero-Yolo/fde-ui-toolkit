@@ -3,10 +3,10 @@
 import * as React from "react"
 import { ZoomIn, ZoomOut, RotateCcw, Download } from "lucide-react"
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Skeleton } from "@/components/ui/skeleton"
+import { cn } from "../../../lib/utils"
+import { Button } from "../button"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../card"
+import { Skeleton } from "../skeleton"
 
 interface GenericDesignPreviewProps {
   imageUrl?: string

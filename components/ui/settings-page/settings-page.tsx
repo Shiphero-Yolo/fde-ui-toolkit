@@ -2,11 +2,11 @@
 
 import * as React from "react";
 import { Check, Loader2, Save } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Alert, AlertTitle } from "@/components/ui/alert";
-import { cn } from "@/lib/utils";
+import { Button } from "../button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../tabs";
+import { Alert, AlertTitle } from "../alert";
+import { cn } from "../../../lib/utils";
 
 export interface SettingsTab {
   /** Unique identifier for the tab */
