@@ -69,6 +69,7 @@ export * from "./sidebar"
 export * from "./table"
 export * from "./chart"
 export * from "./carousel"
+export * from "./ranked-list-card"
 
 // Feedback Components
 export * from "./alert"
