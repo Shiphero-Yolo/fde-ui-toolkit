@@ -1403,13 +1403,14 @@ export default function Showcase() {
 
         {/* Calendar Section */}
         <AnimatedSection className="mb-12">
-          <h2 className="text-2xl font-semibold mb-6">Calendar</h2>
+          <h2 className="text-2xl font-semibold mb-2">Calendar</h2>
+          <code className="text-xs text-muted-foreground mb-6 block">d38a916</code>
           <Card>
             <CardHeader>
               <CardTitle>Calendar Component</CardTitle>
               <CardDescription>Date picker with month navigation</CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="flex flex-col items-center">
               <Calendar
                 mode="single"
                 selected={date}
@@ -1417,7 +1418,7 @@ export default function Showcase() {
                 className="rounded-md border"
               />
               {date && (
-                <p className="text-sm text-muted-foreground mt-4">
+                <p className="text-sm text-muted-foreground mt-4 text-center">
                   Selected: {date.toDateString()}
                 </p>
               )}
