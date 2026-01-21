@@ -38,14 +38,16 @@ export interface CollapsibleSidebarProps {
   appName?: string;
   /** Custom logo component (overrides logoSrc) */
   logo?: React.ReactNode;
-  /** Footer content (e.g., user profile) */
-  footer?: React.ReactNode;
+  /** Footer content (e.g., user profile) - can be ReactNode or function that receives expanded state */
+  footer?: React.ReactNode | ((props: { expanded: boolean }) => React.ReactNode);
   /** Callback when navigation occurs */
   onNavigate?: (href: string) => void;
   /** Custom class name */
   className?: string;
   /** Default expanded sections */
   defaultExpandedSections?: Record<string, boolean>;
+  /** Use absolute positioning instead of fixed (for contained demos) */
+  contained?: boolean;
 }
 
 export function CollapsibleSidebar({
@@ -58,6 +60,7 @@ export function CollapsibleSidebar({
   onNavigate,
   className,
   defaultExpandedSections = {},
+  contained = false,
 }: CollapsibleSidebarProps) {
   const [expanded, setExpanded] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -91,8 +94,8 @@ export function CollapsibleSidebar({
 
   return (
     <>
-      {/* Hamburger Button (Mobile only) */}
-      {!mobileMenuOpen && (
+      {/* Hamburger Button (Mobile only, hidden when contained) */}
+      {!contained && !mobileMenuOpen && (
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           className="fixed top-4 left-4 z-[100] lg:hidden p-2"
@@ -102,8 +105,8 @@ export function CollapsibleSidebar({
         </button>
       )}
 
-      {/* Backdrop (Mobile only) */}
-      {mobileMenuOpen && (
+      {/* Backdrop (Mobile only, hidden when contained) */}
+      {!contained && mobileMenuOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-[60] lg:hidden"
           onClick={() => setMobileMenuOpen(false)}
@@ -113,9 +116,10 @@ export function CollapsibleSidebar({
       {/* Sidebar */}
       <div
         className={cn(
-          "fixed top-0 left-0 h-full z-[70] flex flex-col border-r bg-white shadow-md transition-all duration-300 ease-in-out",
+          "top-0 left-0 h-full z-[70] flex flex-col border-r bg-white shadow-md transition-all duration-300 ease-in-out",
+          contained ? "absolute" : "fixed",
           expanded || mobileMenuOpen ? "w-64" : "w-16",
-          mobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
+          contained ? "translate-x-0" : (mobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"),
           className
         )}
         onMouseEnter={() => setExpanded(true)}

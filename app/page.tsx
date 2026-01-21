@@ -165,13 +165,17 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  CollapsibleSidebar,
+  SettingsPage,
+  SettingsCard,
+  ShipHeroCard,
 } from "@/components/ui"
-import { AlertCircle, CheckCircle2, Copy, Check, Sun, Moon, ChevronDown, ChevronsUpDown, Bold, Italic, Underline, Calendar as CalendarIcon, Home, Settings, User, Mail, Plus, Minus, Search, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react"
+import { AlertCircle, CheckCircle2, Copy, Check, Sun, Moon, ChevronDown, ChevronsUpDown, Bold, Italic, Underline, Calendar as CalendarIcon, Home, Settings, User, Mail, Plus, Minus, Search, ArrowUpDown, ArrowUp, ArrowDown, LayoutDashboard, Package, ShoppingCart, BarChart3, Bell, HelpCircle, LogOut, ChevronUp, PanelLeftClose, PanelLeft, Palette, Type, MousePointer, FormInput, LayoutList, Layers, MessageSquare, Grid3X3, Image as ImageIcon, SlidersHorizontal, Tag } from "lucide-react"
 import Image from "next/image"
 import { z } from "zod"
 
 // Animated section component with entrance animation
-function AnimatedSection({ children, className = "", delay = 0 }: { children: ReactNode; className?: string; delay?: number }) {
+function AnimatedSection({ children, className = "", delay = 0, id }: { children: ReactNode; className?: string; delay?: number; id?: string }) {
   const ref = useRef<HTMLDivElement>(null)
   const hasAnimated = useRef(false)
 
@@ -206,7 +210,7 @@ function AnimatedSection({ children, className = "", delay = 0 }: { children: Re
   }, [delay])
 
   return (
-    <div ref={ref} className={className}>
+    <div ref={ref} id={id} className={className}>
       {children}
     </div>
   )
@@ -487,6 +491,15 @@ export default function Showcase() {
   const [tableCurrentPage, setTableCurrentPage] = useState(1)
   const tableItemsPerPage = 5
 
+  // Navigation state
+  const [showScrollTop, setShowScrollTop] = useState(false)
+  const [sideMenuOpen, setSideMenuOpen] = useState(true)
+  const [activeSection, setActiveSection] = useState("color-palette")
+  const [componentsExpanded, setComponentsExpanded] = useState(true)
+  const [layoutsExpanded, setLayoutsExpanded] = useState(true)
+  const [isScrollingTo, setIsScrollingTo] = useState<string | null>(null)
+  const [activeTab, setActiveTab] = useState("components")
+
   const headerRef = useRef<HTMLDivElement>(null)
   const titleRef = useRef<HTMLHeadingElement>(null)
   const subtitleRef = useRef<HTMLParagraphElement>(null)
@@ -625,23 +638,220 @@ export default function Showcase() {
     }
   }, [])
 
+  // Scroll handling for back to top button and active section
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 400)
+
+      // Skip updating active section if we're programmatically scrolling
+      if (isScrollingTo) return
+
+      // Update active section based on scroll position
+      const sections = [
+        "color-palette", "typography", "buttons", "badges", "form-controls",
+        "tabs", "dialogs", "menus", "navigation", "table", "media", "feedback", "misc",
+        "dashboard-layout", "settings-layout"
+      ]
+      for (const section of sections) {
+        const element = document.getElementById(section)
+        if (element) {
+          const rect = element.getBoundingClientRect()
+          if (rect.top <= 150 && rect.bottom >= 150) {
+            setActiveSection(section)
+            break
+          }
+        }
+      }
+    }
+
+    window.addEventListener("scroll", handleScroll)
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [isScrollingTo])
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" })
+  }
+
+  const scrollToSection = (sectionId: string) => {
+    // Determine which tab the section belongs to
+    const layoutSections = ["dashboard-layout", "settings-layout"]
+    const targetTab = layoutSections.includes(sectionId) ? "layouts" : "components"
+
+    // Switch tab if needed
+    if (activeTab !== targetTab) {
+      setActiveTab(targetTab)
+      // Wait for tab content to render before scrolling
+      setTimeout(() => {
+        const element = document.getElementById(sectionId)
+        if (element) {
+          setActiveSection(sectionId)
+          setIsScrollingTo(sectionId)
+          element.scrollIntoView({ behavior: "smooth", block: "start" })
+          setTimeout(() => {
+            setIsScrollingTo(null)
+          }, 800)
+        }
+      }, 100)
+    } else {
+      const element = document.getElementById(sectionId)
+      if (element) {
+        // Set active section immediately and mark as scrolling
+        setActiveSection(sectionId)
+        setIsScrollingTo(sectionId)
+        element.scrollIntoView({ behavior: "smooth", block: "start" })
+        // Clear scrolling state after animation completes
+        setTimeout(() => {
+          setIsScrollingTo(null)
+        }, 800)
+      }
+    }
+  }
+
+  // Side menu items for Components tab
+  const componentMenuItems = [
+    { id: "color-palette", label: "Color Palette", icon: Palette },
+    { id: "typography", label: "Typography", icon: Type },
+    { id: "buttons", label: "Buttons", icon: MousePointer },
+    { id: "badges", label: "Badges", icon: Tag },
+    { id: "form-controls", label: "Form Controls", icon: FormInput },
+    { id: "tabs", label: "Tabs & Accordion", icon: LayoutList },
+    { id: "dialogs", label: "Dialogs & Overlays", icon: Layers },
+    { id: "menus", label: "Menus", icon: MessageSquare },
+    { id: "navigation", label: "Navigation", icon: Grid3X3 },
+    { id: "table", label: "Table", icon: LayoutList },
+    { id: "media", label: "Media & Layout", icon: ImageIcon },
+    { id: "feedback", label: "Feedback", icon: AlertCircle },
+    { id: "misc", label: "Misc", icon: SlidersHorizontal },
+  ]
+
+  // Side menu items for Layouts tab
+  const layoutMenuItems = [
+    { id: "dashboard-layout", label: "Dashboard", icon: LayoutDashboard },
+    { id: "settings-layout", label: "Settings Page", icon: Settings },
+  ]
+
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto py-10 px-4">
-        {/* Header */}
-        <div ref={headerRef} className="text-center mb-12 relative">
-          <Button
-            variant="outline"
-            size="icon"
-            className="absolute right-0 top-0"
-            onClick={(e) => {
-              animateButton(e.currentTarget)
-              setIsDark(!isDark)
-            }}
-          >
-            {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-          </Button>
-          <SlipspaceLogo />
+      {/* Side Menu */}
+      <div
+        className={`fixed top-0 left-0 h-full z-40 bg-background border-r transition-all duration-300 ${
+          sideMenuOpen ? "w-56" : "w-0"
+        } overflow-hidden`}
+      >
+        <div className="w-56 h-full flex flex-col">
+          <div className="p-4 border-b flex items-center justify-between">
+            <span className="font-semibold text-sm">Quick Navigation</span>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => setSideMenuOpen(false)}
+            >
+              <PanelLeftClose className="h-4 w-4" />
+            </Button>
+          </div>
+          <ScrollArea className="flex-1 p-2">
+            <div className="space-y-1">
+              {/* Components Section */}
+              <button
+                onClick={() => setComponentsExpanded(!componentsExpanded)}
+                className="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-muted-foreground uppercase hover:bg-muted rounded-md"
+              >
+                <span>Components</span>
+                <ChevronDown className={`h-4 w-4 transition-transform ${componentsExpanded ? "" : "-rotate-90"}`} />
+              </button>
+              {componentsExpanded && (
+                <div className="space-y-1">
+                  {componentMenuItems.map((item) => (
+                    <button
+                      key={item.id}
+                      onClick={() => scrollToSection(item.id)}
+                      className={`w-full flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-colors ${
+                        activeSection === item.id
+                          ? "bg-primary text-primary-foreground"
+                          : "hover:bg-muted"
+                      }`}
+                    >
+                      <item.icon className="h-4 w-4" />
+                      {item.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              <Separator className="my-2" />
+
+              {/* Layouts Section */}
+              <button
+                onClick={() => setLayoutsExpanded(!layoutsExpanded)}
+                className="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-muted-foreground uppercase hover:bg-muted rounded-md"
+              >
+                <span>Layouts</span>
+                <ChevronDown className={`h-4 w-4 transition-transform ${layoutsExpanded ? "" : "-rotate-90"}`} />
+              </button>
+              {layoutsExpanded && (
+                <div className="space-y-1">
+                  {layoutMenuItems.map((item) => (
+                    <button
+                      key={item.id}
+                      onClick={() => scrollToSection(item.id)}
+                      className={`w-full flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-colors ${
+                        activeSection === item.id
+                          ? "bg-primary text-primary-foreground"
+                          : "hover:bg-muted"
+                      }`}
+                    >
+                      <item.icon className="h-4 w-4" />
+                      {item.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </ScrollArea>
+        </div>
+      </div>
+
+      {/* Toggle Side Menu Button (when closed) */}
+      {!sideMenuOpen && (
+        <Button
+          variant="outline"
+          size="icon"
+          className="fixed top-4 left-4 z-50"
+          onClick={() => setSideMenuOpen(true)}
+        >
+          <PanelLeft className="h-4 w-4" />
+        </Button>
+      )}
+
+      {/* Go to Top Button */}
+      {showScrollTop && (
+        <Button
+          variant="outline"
+          size="icon"
+          className="fixed bottom-6 right-6 z-50 shadow-lg"
+          onClick={scrollToTop}
+        >
+          <ChevronUp className="h-5 w-5" />
+        </Button>
+      )}
+
+      <div className={`transition-all duration-300 ${sideMenuOpen ? "ml-56" : "ml-0"}`}>
+        <div className="container mx-auto py-10 px-4">
+          {/* Header */}
+          <div ref={headerRef} className="text-center mb-12 relative">
+            <Button
+              variant="outline"
+              size="icon"
+              className="absolute right-0 top-0"
+              onClick={(e) => {
+                animateButton(e.currentTarget)
+                setIsDark(!isDark)
+              }}
+            >
+              {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            </Button>
+            <SlipspaceLogo />
           <h1 ref={titleRef} className="text-4xl font-bold tracking-tight mb-4 opacity-0">
             Skunkworks UI
           </h1>
@@ -651,10 +861,16 @@ export default function Showcase() {
           </p>
         </div>
 
-        <Separator className="my-8" />
+        {/* Main Content Tabs */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full max-w-md grid-cols-2 mx-auto mb-8">
+            <TabsTrigger value="components">Components</TabsTrigger>
+            <TabsTrigger value="layouts">Layouts</TabsTrigger>
+          </TabsList>
 
-        {/* Color Palette Section */}
-        <AnimatedSection className="mb-12">
+          <TabsContent value="components" className="space-y-0">
+            {/* Color Palette Section */}
+        <AnimatedSection id="color-palette" className="mb-12 scroll-mt-6">
           <h2 className="text-2xl font-semibold mb-6">Color Palette (Mandatory)</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {colorPalette.map((color) => (
@@ -666,7 +882,7 @@ export default function Showcase() {
         <Separator className="my-8" />
 
         {/* Typography Section */}
-        <AnimatedSection className="mb-12">
+        <AnimatedSection id="typography" className="mb-12 scroll-mt-6">
           <h2 className="text-2xl font-semibold mb-6">Typography</h2>
 
           {/* Design System Info */}
@@ -822,7 +1038,7 @@ export default function Showcase() {
         <Separator className="my-8" />
 
         {/* Buttons Section */}
-        <AnimatedSection className="mb-12">
+        <AnimatedSection id="buttons" className="mb-12 scroll-mt-6">
           <h2 className="text-2xl font-semibold mb-6">Buttons</h2>
           <Card>
               <CardHeader>
@@ -851,7 +1067,7 @@ export default function Showcase() {
         </AnimatedSection>
 
         {/* Badges Section */}
-        <AnimatedSection className="mb-12" delay={100}>
+        <AnimatedSection id="badges" className="mb-12 scroll-mt-6" delay={100}>
           <h2 className="text-2xl font-semibold mb-6">Badges</h2>
           <Card>
               <CardHeader>
@@ -872,7 +1088,7 @@ export default function Showcase() {
         </AnimatedSection>
 
         {/* Form Controls Section */}
-        <AnimatedSection className="mb-12">
+        <AnimatedSection id="form-controls" className="mb-12 scroll-mt-6">
           <h2 className="text-2xl font-semibold mb-6">Form Controls</h2>
           <div className="grid md:grid-cols-2 gap-6">
             <Card>
@@ -1259,7 +1475,7 @@ export default function Showcase() {
         </AnimatedSection>
 
         {/* Tabs Section */}
-        <AnimatedSection className="mb-12">
+        <AnimatedSection id="tabs" className="mb-12 scroll-mt-6">
           <h2 className="text-2xl font-semibold mb-6">Tabs</h2>
           <Card>
               <CardContent className="pt-6">
@@ -1383,7 +1599,7 @@ export default function Showcase() {
         </AnimatedSection>
 
         {/* Dialog & Popover Section */}
-        <AnimatedSection className="mb-12">
+        <AnimatedSection id="dialogs" className="mb-12 scroll-mt-6">
           <h2 className="text-2xl font-semibold mb-6">Dialog, Popover & Sheet</h2>
           <Card>
               <CardHeader>
@@ -1517,7 +1733,7 @@ export default function Showcase() {
         </AnimatedSection>
 
         {/* Dropdown & Context Menu Section */}
-        <AnimatedSection className="mb-12">
+        <AnimatedSection id="menus" className="mb-12 scroll-mt-6">
           <h2 className="text-2xl font-semibold mb-6">Dropdown & Context Menu</h2>
           <Card>
             <CardHeader>
@@ -1652,7 +1868,7 @@ export default function Showcase() {
         </AnimatedSection>
 
         {/* Navigation Menu Section */}
-        <AnimatedSection className="mb-12">
+        <AnimatedSection id="navigation" className="mb-12 scroll-mt-6">
           <h2 className="text-2xl font-semibold mb-6">Navigation Menu</h2>
           <Card>
             <CardHeader>
@@ -1746,7 +1962,7 @@ export default function Showcase() {
         </AnimatedSection>
 
         {/* Table Section */}
-        <AnimatedSection className="mb-12">
+        <AnimatedSection id="table" className="mb-12 scroll-mt-6">
           <h2 className="text-2xl font-semibold mb-6">Table</h2>
           <Card>
             <CardHeader>
@@ -1950,7 +2166,7 @@ export default function Showcase() {
         </AnimatedSection>
 
         {/* Carousel Section */}
-        <AnimatedSection className="mb-12">
+        <AnimatedSection id="media" className="mb-12 scroll-mt-6">
           <h2 className="text-2xl font-semibold mb-6">Carousel</h2>
           <Card>
             <CardHeader>
@@ -2028,7 +2244,7 @@ export default function Showcase() {
               <CardDescription>Drag to resize panel sections</CardDescription>
             </CardHeader>
             <CardContent>
-              <ResizablePanelGroup direction="horizontal" className="min-h-[200px] rounded-lg border">
+              <ResizablePanelGroup orientation="horizontal" className="min-h-[200px] rounded-lg border">
                 <ResizablePanel defaultSize={50}>
                   <div className="flex h-full items-center justify-center p-6">
                     <span className="font-semibold">Panel One</span>
@@ -2046,7 +2262,7 @@ export default function Showcase() {
         </AnimatedSection>
 
         {/* Alert Section */}
-        <AnimatedSection className="mb-12">
+        <AnimatedSection id="feedback" className="mb-12 scroll-mt-6">
           <h2 className="text-2xl font-semibold mb-6">Alerts</h2>
           <div className="space-y-4">
             <Alert>
@@ -2106,7 +2322,7 @@ export default function Showcase() {
         </AnimatedSection>
 
         {/* Avatar & Skeleton Section */}
-        <AnimatedSection className="mb-12">
+        <AnimatedSection id="misc" className="mb-12 scroll-mt-6">
           <h2 className="text-2xl font-semibold mb-6">Avatar & Skeleton</h2>
           <div className="grid md:grid-cols-2 gap-6">
             <Card>
@@ -2145,6 +2361,347 @@ export default function Showcase() {
               </Card>
           </div>
         </AnimatedSection>
+          </TabsContent>
+
+          <TabsContent value="layouts" className="space-y-12">
+            {/* Dashboard with Sidebar Layout */}
+            <div id="dashboard-layout" className="scroll-mt-6">
+              <div className="mb-6">
+                <h2 className="text-2xl font-semibold">Dashboard with Collapsible Sidebar</h2>
+                <p className="text-muted-foreground">Hover over the sidebar to expand it. Self-contained layout with navigation and dashboard content.</p>
+              </div>
+              <div className="relative h-[600px] border rounded-lg bg-slate-50 overflow-hidden">
+                <CollapsibleSidebar
+                  contained
+                  appName="Skunkworks"
+                  navItems={[
+                    { href: "/", label: "Dashboard", icon: LayoutDashboard, active: true },
+                    { href: "/orders", label: "Orders", icon: ShoppingCart, badge: 12 },
+                    {
+                      href: "/products",
+                      label: "Products",
+                      icon: Package,
+                      expandable: true,
+                      section: "products",
+                      subItems: [
+                        { href: "/products/inventory", label: "Inventory", badge: 5 },
+                        { href: "/products/catalog", label: "Catalog" },
+                        { href: "/products/pricing", label: "Pricing" },
+                      ],
+                    },
+                    { href: "/analytics", label: "Analytics", icon: BarChart3 },
+                    { href: "/notifications", label: "Notifications", icon: Bell, badge: 3 },
+                    { href: "/settings", label: "Settings", icon: Settings },
+                    { href: "/help", label: "Help & Support", icon: HelpCircle },
+                  ]}
+                  pathname="/"
+                  defaultExpandedSections={{ products: false }}
+                  footer={({ expanded }: { expanded: boolean }) => (
+                    <div className="flex items-center gap-3 px-3 py-2">
+                      <Avatar className="h-8 w-8">
+                        <AvatarFallback>JD</AvatarFallback>
+                      </Avatar>
+                      {expanded && (
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium truncate">John Doe</p>
+                          <p className="text-xs text-muted-foreground truncate">john@example.com</p>
+                        </div>
+                      )}
+                      {expanded && (
+                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <LogOut className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
+                  )}
+                />
+                {/* Main Dashboard Content */}
+                <div className="ml-16 h-full p-8 overflow-auto">
+                  <div className="max-w-6xl">
+                    <div className="flex items-center justify-between mb-8">
+                      <div>
+                        <h1 className="text-2xl font-bold">Dashboard</h1>
+                        <p className="text-muted-foreground">Welcome back, John! Here&apos;s what&apos;s happening.</p>
+                      </div>
+                      <Button>
+                        <Plus className="mr-2 h-4 w-4" />
+                        New Order
+                      </Button>
+                    </div>
+                    <div className="grid grid-cols-4 gap-6 mb-8">
+                      <Card>
+                        <CardContent className="pt-6">
+                          <div className="text-3xl font-bold">1,234</div>
+                          <p className="text-sm text-muted-foreground">Total Orders</p>
+                          <p className="text-xs text-green-600 mt-1">+12% from last month</p>
+                        </CardContent>
+                      </Card>
+                      <Card>
+                        <CardContent className="pt-6">
+                          <div className="text-3xl font-bold">$45,678</div>
+                          <p className="text-sm text-muted-foreground">Revenue</p>
+                          <p className="text-xs text-green-600 mt-1">+8% from last month</p>
+                        </CardContent>
+                      </Card>
+                      <Card>
+                        <CardContent className="pt-6">
+                          <div className="text-3xl font-bold">89%</div>
+                          <p className="text-sm text-muted-foreground">Fulfillment Rate</p>
+                          <p className="text-xs text-green-600 mt-1">+2% from last month</p>
+                        </CardContent>
+                      </Card>
+                      <Card>
+                        <CardContent className="pt-6">
+                          <div className="text-3xl font-bold">24</div>
+                          <p className="text-sm text-muted-foreground">Pending Orders</p>
+                          <p className="text-xs text-amber-600 mt-1">Needs attention</p>
+                        </CardContent>
+                      </Card>
+                    </div>
+                    <div className="grid grid-cols-2 gap-6">
+                      <Card>
+                        <CardHeader>
+                          <CardTitle>Recent Orders</CardTitle>
+                          <CardDescription>Latest orders from your store</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="space-y-4">
+                            {[
+                              { id: "ORD-001", customer: "Alice Smith", amount: "$125.00", status: "Shipped" },
+                              { id: "ORD-002", customer: "Bob Johnson", amount: "$89.00", status: "Processing" },
+                              { id: "ORD-003", customer: "Carol White", amount: "$245.00", status: "Delivered" },
+                            ].map((order) => (
+                              <div key={order.id} className="flex items-center justify-between">
+                                <div>
+                                  <p className="font-medium">{order.id}</p>
+                                  <p className="text-sm text-muted-foreground">{order.customer}</p>
+                                </div>
+                                <div className="text-right">
+                                  <p className="font-medium">{order.amount}</p>
+                                  <Badge variant={order.status === "Delivered" ? "default" : order.status === "Shipped" ? "secondary" : "outline"}>
+                                    {order.status}
+                                  </Badge>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </CardContent>
+                      </Card>
+                      <Card>
+                        <CardHeader>
+                          <CardTitle>Quick Actions</CardTitle>
+                          <CardDescription>Common tasks and shortcuts</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="grid grid-cols-2 gap-3">
+                            <Button variant="outline" className="h-20 flex-col">
+                              <Package className="h-6 w-6 mb-2" />
+                              Add Product
+                            </Button>
+                            <Button variant="outline" className="h-20 flex-col">
+                              <ShoppingCart className="h-6 w-6 mb-2" />
+                              View Orders
+                            </Button>
+                            <Button variant="outline" className="h-20 flex-col">
+                              <BarChart3 className="h-6 w-6 mb-2" />
+                              Analytics
+                            </Button>
+                            <Button variant="outline" className="h-20 flex-col">
+                              <Settings className="h-6 w-6 mb-2" />
+                              Settings
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Settings Page Layout */}
+            <div id="settings-layout" className="scroll-mt-6">
+              <div className="mb-6">
+                <h2 className="text-2xl font-semibold">Settings Page</h2>
+                <p className="text-muted-foreground">Self-contained settings page layout with tabs, settings cards, and integration components.</p>
+              </div>
+              <div className="border rounded-lg bg-background overflow-hidden">
+                {/* Settings Header */}
+                <header className="flex h-14 items-center gap-4 border-b bg-white px-6">
+                  <div className="flex-1">
+                    <h1 className="text-lg font-semibold">Settings</h1>
+                  </div>
+                  <Button variant="outline" size="sm">
+                    <User className="mr-2 h-4 w-4" />
+                    Account
+                  </Button>
+                </header>
+
+                {/* Settings Content */}
+                <main className="p-6">
+                  <Tabs defaultValue="general" className="space-y-6">
+                    <TabsList className="grid w-full max-w-lg grid-cols-3">
+                      <TabsTrigger value="general">General</TabsTrigger>
+                      <TabsTrigger value="integrations">Integrations</TabsTrigger>
+                      <TabsTrigger value="notifications">Notifications</TabsTrigger>
+                    </TabsList>
+
+                    <TabsContent value="general" className="space-y-6">
+                      <div className="grid lg:grid-cols-2 gap-6">
+                        <SettingsCard
+                          title="Profile Settings"
+                          description="Manage your account profile information"
+                          showFooter={false}
+                        >
+                          <div className="grid gap-4">
+                            <div className="grid grid-cols-2 gap-4">
+                              <div className="space-y-2">
+                                <Label htmlFor="settings-name">Name</Label>
+                                <Input id="settings-name" defaultValue="John Doe" />
+                              </div>
+                              <div className="space-y-2">
+                                <Label htmlFor="settings-email">Email</Label>
+                                <Input id="settings-email" type="email" defaultValue="john@example.com" />
+                              </div>
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="settings-company">Company</Label>
+                              <Input id="settings-company" defaultValue="Acme Inc." />
+                            </div>
+                          </div>
+                        </SettingsCard>
+
+                        <SettingsCard
+                          title="Preferences"
+                          description="Configure your application preferences"
+                          showFooter={false}
+                        >
+                          <div className="space-y-4">
+                            <div className="flex items-center justify-between">
+                              <div className="space-y-0.5">
+                                <Label>Dark Mode</Label>
+                                <p className="text-sm text-muted-foreground">Enable dark theme</p>
+                              </div>
+                              <Switch />
+                            </div>
+                            <Separator />
+                            <div className="flex items-center justify-between">
+                              <div className="space-y-0.5">
+                                <Label>Compact View</Label>
+                                <p className="text-sm text-muted-foreground">Use condensed layout</p>
+                              </div>
+                              <Switch />
+                            </div>
+                            <Separator />
+                            <div className="flex items-center justify-between">
+                              <div className="space-y-0.5">
+                                <Label>Auto-save</Label>
+                                <p className="text-sm text-muted-foreground">Automatically save changes</p>
+                              </div>
+                              <Switch defaultChecked />
+                            </div>
+                          </div>
+                        </SettingsCard>
+                      </div>
+                    </TabsContent>
+
+                    <TabsContent value="integrations" className="space-y-6">
+                      <div className="grid lg:grid-cols-2 gap-6">
+                        <ShipHeroCard
+                          settings={{
+                            shiphero_connected: true,
+                            use_order_queue_processor: true,
+                          }}
+                          onOAuthFlow={async () => {}}
+                          onDisconnect={async () => {}}
+                          onRegisterWebhook={async () => {}}
+                          onDeleteWebhook={async () => {}}
+                          onUpdateSettings={async () => {}}
+                        />
+
+                        <SettingsCard
+                          title="Other Integrations"
+                          description="Connect additional services"
+                          showFooter={false}
+                        >
+                          <div className="space-y-4">
+                            <div className="flex items-center justify-between p-4 border rounded-lg">
+                              <div className="flex items-center gap-3">
+                                <div className="h-10 w-10 rounded bg-blue-100 flex items-center justify-center">
+                                  <Mail className="h-5 w-5 text-blue-600" />
+                                </div>
+                                <div>
+                                  <p className="font-medium">Email Service</p>
+                                  <p className="text-sm text-muted-foreground">Send transactional emails</p>
+                                </div>
+                              </div>
+                              <Button variant="outline" size="sm">Connect</Button>
+                            </div>
+                            <div className="flex items-center justify-between p-4 border rounded-lg">
+                              <div className="flex items-center gap-3">
+                                <div className="h-10 w-10 rounded bg-green-100 flex items-center justify-center">
+                                  <BarChart3 className="h-5 w-5 text-green-600" />
+                                </div>
+                                <div>
+                                  <p className="font-medium">Analytics</p>
+                                  <p className="text-sm text-muted-foreground">Track user behavior</p>
+                                </div>
+                              </div>
+                              <Button variant="outline" size="sm">Connect</Button>
+                            </div>
+                          </div>
+                        </SettingsCard>
+                      </div>
+                    </TabsContent>
+
+                    <TabsContent value="notifications" className="space-y-6">
+                      <SettingsCard
+                        title="Notification Preferences"
+                        description="Choose how you want to be notified"
+                        showFooter={false}
+                        className="max-w-2xl"
+                      >
+                        <div className="space-y-4">
+                          <div className="flex items-center justify-between">
+                            <div className="space-y-0.5">
+                              <Label>Email Notifications</Label>
+                              <p className="text-sm text-muted-foreground">Receive updates via email</p>
+                            </div>
+                            <Switch defaultChecked />
+                          </div>
+                          <Separator />
+                          <div className="flex items-center justify-between">
+                            <div className="space-y-0.5">
+                              <Label>Push Notifications</Label>
+                              <p className="text-sm text-muted-foreground">Receive browser notifications</p>
+                            </div>
+                            <Switch defaultChecked />
+                          </div>
+                          <Separator />
+                          <div className="flex items-center justify-between">
+                            <div className="space-y-0.5">
+                              <Label>Order Updates</Label>
+                              <p className="text-sm text-muted-foreground">Get notified about order status changes</p>
+                            </div>
+                            <Switch defaultChecked />
+                          </div>
+                          <Separator />
+                          <div className="flex items-center justify-between">
+                            <div className="space-y-0.5">
+                              <Label>Marketing Emails</Label>
+                              <p className="text-sm text-muted-foreground">Receive promotional content</p>
+                            </div>
+                            <Switch />
+                          </div>
+                        </div>
+                      </SettingsCard>
+                    </TabsContent>
+                  </Tabs>
+                </main>
+              </div>
+            </div>
+          </TabsContent>
+        </Tabs>
 
         {/* Footer */}
         <Separator className="my-8" />
@@ -2153,6 +2710,7 @@ export default function Showcase() {
             Skunkworks UI - Built with Radix UI, Tailwind CSS, and TypeScript
           </p>
         </footer>
+        </div>
       </div>
     </div>
   )
