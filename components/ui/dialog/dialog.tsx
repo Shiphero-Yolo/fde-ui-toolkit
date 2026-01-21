@@ -3,7 +3,7 @@
 import * as React from "react"
 import * as DialogPrimitive from "@radix-ui/react-dialog"
 import { X } from "lucide-react"
-import { animate } from "animejs"
+import anime from "animejs"
 import { cn } from "../../../lib/utils"
 
 /**
@@ -30,10 +30,11 @@ const DialogOverlay = React.forwardRef<
 
   React.useEffect(() => {
     if (overlayRef.current) {
-      animate(overlayRef.current, {
+      anime({
+        targets: overlayRef.current,
         opacity: [0, 1],
         duration: 200,
-        ease: "outCubic",
+        easing: "easeOutCubic",
       })
     }
   }, [])
@@ -67,12 +68,13 @@ const DialogContent = React.forwardRef<
 
   React.useEffect(() => {
     if (contentRef.current) {
-      animate(contentRef.current, {
+      anime({
+        targets: contentRef.current,
         opacity: [0, 1],
         scale: [0.95, 1],
         translateY: ["-48%", "-50%"],
         duration: 300,
-        ease: "outCubic",
+        easing: "easeOutCubic",
       })
     }
   }, [])

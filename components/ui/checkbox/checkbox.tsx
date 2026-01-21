@@ -3,7 +3,7 @@
 import * as React from "react"
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox"
 import { Check } from "lucide-react"
-import { animate } from "animejs"
+import anime from "animejs"
 import { cn } from "../../../lib/utils"
 
 /**
@@ -14,11 +14,12 @@ const AnimatedCheckIndicator = () => {
 
   React.useEffect(() => {
     if (iconRef.current) {
-      animate(iconRef.current, {
+      anime({
+        targets: iconRef.current,
         scale: [0, 1.2, 1],
         opacity: [0, 1],
         duration: 200,
-        ease: "outCubic",
+        easing: "easeOutCubic",
       })
     }
   }, [])
