@@ -65,8 +65,108 @@ import {
   InlineCode,
   Blockquote,
   Muted,
+  // New components
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+  AspectRatio,
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+  Calendar,
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+  InputOTPSeparator,
+  Menubar,
+  MenubarContent,
+  MenubarItem,
+  MenubarMenu,
+  MenubarSeparator,
+  MenubarTrigger,
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+  ScrollArea,
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+  Slider,
+  Toggle,
+  ToggleGroup,
+  ToggleGroupItem,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui"
-import { AlertCircle, CheckCircle2, Copy, Check, Sun, Moon } from "lucide-react"
+import { AlertCircle, CheckCircle2, Copy, Check, Sun, Moon, ChevronDown, ChevronsUpDown, Bold, Italic, Underline, Calendar as CalendarIcon, Home, Settings, User, Mail, Plus, Minus, Search, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react"
 import Image from "next/image"
 import { z } from "zod"
 
@@ -374,6 +474,19 @@ export default function Showcase() {
   const [checkboxChecked, setCheckboxChecked] = useState(false)
   const [progress, setProgress] = useState(33)
   const [isDark, setIsDark] = useState(false)
+  const [date, setDate] = useState<Date | undefined>(new Date())
+  const [sliderValue, setSliderValue] = useState([50])
+  const [collapsibleOpen, setCollapsibleOpen] = useState(false)
+  const [otpValue, setOtpValue] = useState("")
+
+  // Table state
+  const [tableSearch, setTableSearch] = useState("")
+  const [tableStatusFilter, setTableStatusFilter] = useState<string>("all")
+  const [tableSortColumn, setTableSortColumn] = useState<string | null>(null)
+  const [tableSortDirection, setTableSortDirection] = useState<"asc" | "desc">("asc")
+  const [tableCurrentPage, setTableCurrentPage] = useState(1)
+  const tableItemsPerPage = 5
+
   const headerRef = useRef<HTMLDivElement>(null)
   const titleRef = useRef<HTMLHeadingElement>(null)
   const subtitleRef = useRef<HTMLParagraphElement>(null)
@@ -419,6 +532,71 @@ export default function Showcase() {
       setZodSuccess(true)
     }
   }
+
+  // Invoice data for table
+  const invoiceData = [
+    { id: "INV001", status: "Paid", method: "Credit Card", amount: 250.00 },
+    { id: "INV002", status: "Pending", method: "PayPal", amount: 150.00 },
+    { id: "INV003", status: "Unpaid", method: "Bank Transfer", amount: 350.00 },
+    { id: "INV004", status: "Paid", method: "Credit Card", amount: 450.00 },
+    { id: "INV005", status: "Paid", method: "PayPal", amount: 550.00 },
+    { id: "INV006", status: "Pending", method: "Bank Transfer", amount: 200.00 },
+    { id: "INV007", status: "Unpaid", method: "Credit Card", amount: 175.00 },
+    { id: "INV008", status: "Paid", method: "PayPal", amount: 325.00 },
+    { id: "INV009", status: "Pending", method: "Credit Card", amount: 425.00 },
+    { id: "INV010", status: "Paid", method: "Bank Transfer", amount: 275.00 },
+    { id: "INV011", status: "Unpaid", method: "PayPal", amount: 125.00 },
+    { id: "INV012", status: "Paid", method: "Credit Card", amount: 600.00 },
+  ]
+
+  // Filter and sort invoices
+  const filteredInvoices = invoiceData
+    .filter((invoice) => {
+      const matchesSearch =
+        invoice.id.toLowerCase().includes(tableSearch.toLowerCase()) ||
+        invoice.method.toLowerCase().includes(tableSearch.toLowerCase()) ||
+        invoice.status.toLowerCase().includes(tableSearch.toLowerCase())
+      const matchesStatus = tableStatusFilter === "all" || invoice.status === tableStatusFilter
+      return matchesSearch && matchesStatus
+    })
+    .sort((a, b) => {
+      if (!tableSortColumn) return 0
+      let aValue: string | number = a[tableSortColumn as keyof typeof a]
+      let bValue: string | number = b[tableSortColumn as keyof typeof b]
+      if (typeof aValue === "string") aValue = aValue.toLowerCase()
+      if (typeof bValue === "string") bValue = bValue.toLowerCase()
+      if (aValue < bValue) return tableSortDirection === "asc" ? -1 : 1
+      if (aValue > bValue) return tableSortDirection === "asc" ? 1 : -1
+      return 0
+    })
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredInvoices.length / tableItemsPerPage)
+  const paginatedInvoices = filteredInvoices.slice(
+    (tableCurrentPage - 1) * tableItemsPerPage,
+    tableCurrentPage * tableItemsPerPage
+  )
+
+  const handleSort = (column: string) => {
+    if (tableSortColumn === column) {
+      setTableSortDirection(tableSortDirection === "asc" ? "desc" : "asc")
+    } else {
+      setTableSortColumn(column)
+      setTableSortDirection("asc")
+    }
+  }
+
+  const getSortIcon = (column: string) => {
+    if (tableSortColumn !== column) return <ArrowUpDown className="ml-2 h-4 w-4" />
+    return tableSortDirection === "asc"
+      ? <ArrowUp className="ml-2 h-4 w-4" />
+      : <ArrowDown className="ml-2 h-4 w-4" />
+  }
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setTableCurrentPage(1)
+  }, [tableSearch, tableStatusFilter])
 
   useEffect(() => {
     if (isDark) {
@@ -855,6 +1033,113 @@ export default function Showcase() {
           </div>
         </AnimatedSection>
 
+        {/* Slider Section */}
+        <AnimatedSection className="mb-12">
+          <h2 className="text-2xl font-semibold mb-6">Slider</h2>
+          <Card>
+            <CardHeader>
+              <CardTitle>Slider Component</CardTitle>
+              <CardDescription>Drag to select a value within a range</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-4">
+                <Label>Volume: {sliderValue[0]}%</Label>
+                <Slider
+                  value={sliderValue}
+                  onValueChange={setSliderValue}
+                  max={100}
+                  step={1}
+                  className="w-full"
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </AnimatedSection>
+
+        {/* Toggle Section */}
+        <AnimatedSection className="mb-12">
+          <h2 className="text-2xl font-semibold mb-6">Toggle & Toggle Group</h2>
+          <Card>
+            <CardHeader>
+              <CardTitle>Toggle Components</CardTitle>
+              <CardDescription>Toggleable buttons for settings and options</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="flex gap-4">
+                <Toggle aria-label="Toggle bold">
+                  <Bold className="h-4 w-4" />
+                </Toggle>
+                <Toggle aria-label="Toggle italic">
+                  <Italic className="h-4 w-4" />
+                </Toggle>
+                <Toggle aria-label="Toggle underline">
+                  <Underline className="h-4 w-4" />
+                </Toggle>
+              </div>
+              <Separator />
+              <div>
+                <Label className="mb-3 block">Toggle Group (Single Selection)</Label>
+                <ToggleGroup type="single" defaultValue="center">
+                  <ToggleGroupItem value="left" aria-label="Left aligned">
+                    Left
+                  </ToggleGroupItem>
+                  <ToggleGroupItem value="center" aria-label="Center aligned">
+                    Center
+                  </ToggleGroupItem>
+                  <ToggleGroupItem value="right" aria-label="Right aligned">
+                    Right
+                  </ToggleGroupItem>
+                </ToggleGroup>
+              </div>
+              <div>
+                <Label className="mb-3 block">Toggle Group (Multiple Selection)</Label>
+                <ToggleGroup type="multiple">
+                  <ToggleGroupItem value="bold" aria-label="Toggle bold">
+                    <Bold className="h-4 w-4" />
+                  </ToggleGroupItem>
+                  <ToggleGroupItem value="italic" aria-label="Toggle italic">
+                    <Italic className="h-4 w-4" />
+                  </ToggleGroupItem>
+                  <ToggleGroupItem value="underline" aria-label="Toggle underline">
+                    <Underline className="h-4 w-4" />
+                  </ToggleGroupItem>
+                </ToggleGroup>
+              </div>
+            </CardContent>
+          </Card>
+        </AnimatedSection>
+
+        {/* Input OTP Section */}
+        <AnimatedSection className="mb-12">
+          <h2 className="text-2xl font-semibold mb-6">Input OTP</h2>
+          <Card>
+            <CardHeader>
+              <CardTitle>One-Time Password Input</CardTitle>
+              <CardDescription>Enter verification codes with accessible input</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <InputOTP maxLength={6} value={otpValue} onChange={setOtpValue}>
+                <InputOTPGroup>
+                  <InputOTPSlot index={0} />
+                  <InputOTPSlot index={1} />
+                  <InputOTPSlot index={2} />
+                </InputOTPGroup>
+                <InputOTPSeparator />
+                <InputOTPGroup>
+                  <InputOTPSlot index={3} />
+                  <InputOTPSlot index={4} />
+                  <InputOTPSlot index={5} />
+                </InputOTPGroup>
+              </InputOTP>
+              {otpValue && (
+                <p className="text-sm text-muted-foreground mt-4">
+                  Entered: {otpValue}
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        </AnimatedSection>
+
         {/* Select Section */}
         <AnimatedSection className="mb-12">
           <h2 className="text-2xl font-semibold mb-6">Select</h2>
@@ -877,6 +1162,100 @@ export default function Showcase() {
                 </Select>
               </CardContent>
             </Card>
+        </AnimatedSection>
+
+        {/* Calendar Section */}
+        <AnimatedSection className="mb-12">
+          <h2 className="text-2xl font-semibold mb-6">Calendar</h2>
+          <Card>
+            <CardHeader>
+              <CardTitle>Calendar Component</CardTitle>
+              <CardDescription>Date picker with month navigation</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Calendar
+                mode="single"
+                selected={date}
+                onSelect={setDate}
+                className="rounded-md border"
+              />
+              {date && (
+                <p className="text-sm text-muted-foreground mt-4">
+                  Selected: {date.toDateString()}
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        </AnimatedSection>
+
+        {/* Accordion Section */}
+        <AnimatedSection className="mb-12">
+          <h2 className="text-2xl font-semibold mb-6">Accordion</h2>
+          <Card>
+            <CardHeader>
+              <CardTitle>Accordion Component</CardTitle>
+              <CardDescription>Collapsible content sections</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Accordion type="single" collapsible className="w-full">
+                <AccordionItem value="item-1">
+                  <AccordionTrigger>Is it accessible?</AccordionTrigger>
+                  <AccordionContent>
+                    Yes. It adheres to the WAI-ARIA design pattern and supports keyboard navigation.
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="item-2">
+                  <AccordionTrigger>Is it styled?</AccordionTrigger>
+                  <AccordionContent>
+                    Yes. It comes with default styles that match the other components and can be easily customized.
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="item-3">
+                  <AccordionTrigger>Is it animated?</AccordionTrigger>
+                  <AccordionContent>
+                    Yes. It uses CSS animations for smooth open/close transitions.
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </CardContent>
+          </Card>
+        </AnimatedSection>
+
+        {/* Collapsible Section */}
+        <AnimatedSection className="mb-12">
+          <h2 className="text-2xl font-semibold mb-6">Collapsible</h2>
+          <Card>
+            <CardHeader>
+              <CardTitle>Collapsible Component</CardTitle>
+              <CardDescription>Expandable/collapsible content area</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Collapsible open={collapsibleOpen} onOpenChange={setCollapsibleOpen} className="w-full space-y-2">
+                <div className="flex items-center justify-between space-x-4">
+                  <h4 className="text-sm font-semibold">
+                    @peduarte starred 3 repositories
+                  </h4>
+                  <CollapsibleTrigger asChild>
+                    <Button variant="ghost" size="sm">
+                      <ChevronsUpDown className="h-4 w-4" />
+                      <span className="sr-only">Toggle</span>
+                    </Button>
+                  </CollapsibleTrigger>
+                </div>
+                <div className="rounded-md border px-4 py-2 font-mono text-sm">
+                  @radix-ui/primitives
+                </div>
+                <CollapsibleContent className="space-y-2">
+                  <div className="rounded-md border px-4 py-2 font-mono text-sm">
+                    @radix-ui/colors
+                  </div>
+                  <div className="rounded-md border px-4 py-2 font-mono text-sm">
+                    @stitches/react
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
+            </CardContent>
+          </Card>
         </AnimatedSection>
 
         {/* Tabs Section */}
@@ -940,13 +1319,76 @@ export default function Showcase() {
             </Card>
         </AnimatedSection>
 
+        {/* Breadcrumb Section */}
+        <AnimatedSection className="mb-12">
+          <h2 className="text-2xl font-semibold mb-6">Breadcrumb</h2>
+          <Card>
+            <CardHeader>
+              <CardTitle>Breadcrumb Component</CardTitle>
+              <CardDescription>Navigation breadcrumb trail</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Breadcrumb>
+                <BreadcrumbList>
+                  <BreadcrumbItem>
+                    <BreadcrumbLink href="#">Home</BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <BreadcrumbLink href="#">Components</BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <BreadcrumbPage>Breadcrumb</BreadcrumbPage>
+                  </BreadcrumbItem>
+                </BreadcrumbList>
+              </Breadcrumb>
+            </CardContent>
+          </Card>
+        </AnimatedSection>
+
+        {/* Pagination Section */}
+        <AnimatedSection className="mb-12">
+          <h2 className="text-2xl font-semibold mb-6">Pagination</h2>
+          <Card>
+            <CardHeader>
+              <CardTitle>Pagination Component</CardTitle>
+              <CardDescription>Page navigation controls</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious href="#" />
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationLink href="#">1</PaginationLink>
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationLink href="#" isActive>2</PaginationLink>
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationLink href="#">3</PaginationLink>
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationEllipsis />
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationNext href="#" />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </CardContent>
+          </Card>
+        </AnimatedSection>
+
         {/* Dialog & Popover Section */}
         <AnimatedSection className="mb-12">
-          <h2 className="text-2xl font-semibold mb-6">Dialog & Popover</h2>
+          <h2 className="text-2xl font-semibold mb-6">Dialog, Popover & Sheet</h2>
           <Card>
               <CardHeader>
                 <CardTitle>Overlay Components</CardTitle>
-                <CardDescription>Modal dialogs and floating content</CardDescription>
+                <CardDescription>Modal dialogs, floating content, and slide-out panels</CardDescription>
               </CardHeader>
               <CardContent className="flex flex-wrap gap-4">
                 <Dialog>
@@ -972,6 +1414,24 @@ export default function Showcase() {
                   </DialogContent>
                 </Dialog>
 
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="destructive" onClick={(e) => animateButton(e.currentTarget)}>Delete Item</Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This action cannot be undone. This will permanently delete your item.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction>Delete</AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button variant="outline" onClick={(e) => animateButton(e.currentTarget)}>Open Popover</Button>
@@ -992,6 +1452,58 @@ export default function Showcase() {
                   </PopoverContent>
                 </Popover>
 
+                <Sheet>
+                  <SheetTrigger asChild>
+                    <Button variant="outline" onClick={(e) => animateButton(e.currentTarget)}>Open Sheet</Button>
+                  </SheetTrigger>
+                  <SheetContent>
+                    <SheetHeader>
+                      <SheetTitle>Edit profile</SheetTitle>
+                      <SheetDescription>
+                        Make changes to your profile here. Click save when you&apos;re done.
+                      </SheetDescription>
+                    </SheetHeader>
+                    <div className="grid gap-4 py-4">
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="sheet-name" className="text-right">Name</Label>
+                        <Input id="sheet-name" className="col-span-3" />
+                      </div>
+                    </div>
+                  </SheetContent>
+                </Sheet>
+
+                <Drawer>
+                  <DrawerTrigger asChild>
+                    <Button variant="outline" onClick={(e) => animateButton(e.currentTarget)}>Open Drawer</Button>
+                  </DrawerTrigger>
+                  <DrawerContent>
+                    <DrawerHeader>
+                      <DrawerTitle>Move Goal</DrawerTitle>
+                      <DrawerDescription>Set your daily activity goal.</DrawerDescription>
+                    </DrawerHeader>
+                    <div className="p-4 pb-0">
+                      <div className="flex items-center justify-center space-x-2">
+                        <Button variant="outline" size="icon">
+                          <Minus className="h-4 w-4" />
+                        </Button>
+                        <div className="flex-1 text-center">
+                          <div className="text-6xl font-bold tracking-tighter">350</div>
+                          <div className="text-muted-foreground">Calories/day</div>
+                        </div>
+                        <Button variant="outline" size="icon">
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                    <DrawerFooter>
+                      <Button>Submit</Button>
+                      <DrawerClose asChild>
+                        <Button variant="outline">Cancel</Button>
+                      </DrawerClose>
+                    </DrawerFooter>
+                  </DrawerContent>
+                </Drawer>
+
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button variant="secondary">Hover for Tooltip</Button>
@@ -1002,6 +1514,535 @@ export default function Showcase() {
                 </Tooltip>
               </CardContent>
             </Card>
+        </AnimatedSection>
+
+        {/* Dropdown & Context Menu Section */}
+        <AnimatedSection className="mb-12">
+          <h2 className="text-2xl font-semibold mb-6">Dropdown & Context Menu</h2>
+          <Card>
+            <CardHeader>
+              <CardTitle>Menu Components</CardTitle>
+              <CardDescription>Dropdown menus and right-click context menus</CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-wrap gap-4">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline">Open Dropdown</Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56">
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Profile</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Settings className="mr-2 h-4 w-4" />
+                    <span>Settings</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Mail className="mr-2 h-4 w-4" />
+                    <span>Email</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              <ContextMenu>
+                <ContextMenuTrigger className="flex h-[100px] w-[200px] items-center justify-center rounded-md border border-dashed text-sm">
+                  Right click here
+                </ContextMenuTrigger>
+                <ContextMenuContent className="w-64">
+                  <ContextMenuItem>
+                    Back
+                  </ContextMenuItem>
+                  <ContextMenuItem>
+                    Forward
+                  </ContextMenuItem>
+                  <ContextMenuItem>
+                    Reload
+                  </ContextMenuItem>
+                </ContextMenuContent>
+              </ContextMenu>
+            </CardContent>
+          </Card>
+        </AnimatedSection>
+
+        {/* Hover Card Section */}
+        <AnimatedSection className="mb-12">
+          <h2 className="text-2xl font-semibold mb-6">Hover Card</h2>
+          <Card>
+            <CardHeader>
+              <CardTitle>Hover Card Component</CardTitle>
+              <CardDescription>Display additional content on hover</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <HoverCard>
+                <HoverCardTrigger asChild>
+                  <Button variant="link">@nextjs</Button>
+                </HoverCardTrigger>
+                <HoverCardContent className="w-80">
+                  <div className="flex justify-between space-x-4">
+                    <Avatar>
+                      <AvatarImage src="https://github.com/vercel.png" />
+                      <AvatarFallback>VC</AvatarFallback>
+                    </Avatar>
+                    <div className="space-y-1">
+                      <h4 className="text-sm font-semibold">@nextjs</h4>
+                      <p className="text-sm">
+                        The React Framework – created and maintained by @vercel.
+                      </p>
+                      <div className="flex items-center pt-2">
+                        <CalendarIcon className="mr-2 h-4 w-4 opacity-70" />
+                        <span className="text-xs text-muted-foreground">
+                          Joined December 2021
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </HoverCardContent>
+              </HoverCard>
+            </CardContent>
+          </Card>
+        </AnimatedSection>
+
+        {/* Menubar Section */}
+        <AnimatedSection className="mb-12">
+          <h2 className="text-2xl font-semibold mb-6">Menubar</h2>
+          <Card>
+            <CardHeader>
+              <CardTitle>Menubar Component</CardTitle>
+              <CardDescription>Application menu bar with submenus</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Menubar>
+                <MenubarMenu>
+                  <MenubarTrigger>File</MenubarTrigger>
+                  <MenubarContent>
+                    <MenubarItem>New Tab</MenubarItem>
+                    <MenubarItem>New Window</MenubarItem>
+                    <MenubarSeparator />
+                    <MenubarItem>Share</MenubarItem>
+                    <MenubarSeparator />
+                    <MenubarItem>Print</MenubarItem>
+                  </MenubarContent>
+                </MenubarMenu>
+                <MenubarMenu>
+                  <MenubarTrigger>Edit</MenubarTrigger>
+                  <MenubarContent>
+                    <MenubarItem>Undo</MenubarItem>
+                    <MenubarItem>Redo</MenubarItem>
+                    <MenubarSeparator />
+                    <MenubarItem>Cut</MenubarItem>
+                    <MenubarItem>Copy</MenubarItem>
+                    <MenubarItem>Paste</MenubarItem>
+                  </MenubarContent>
+                </MenubarMenu>
+                <MenubarMenu>
+                  <MenubarTrigger>View</MenubarTrigger>
+                  <MenubarContent>
+                    <MenubarItem>Zoom In</MenubarItem>
+                    <MenubarItem>Zoom Out</MenubarItem>
+                    <MenubarSeparator />
+                    <MenubarItem>Full Screen</MenubarItem>
+                  </MenubarContent>
+                </MenubarMenu>
+              </Menubar>
+            </CardContent>
+          </Card>
+        </AnimatedSection>
+
+        {/* Navigation Menu Section */}
+        <AnimatedSection className="mb-12">
+          <h2 className="text-2xl font-semibold mb-6">Navigation Menu</h2>
+          <Card>
+            <CardHeader>
+              <CardTitle>Navigation Menu Component</CardTitle>
+              <CardDescription>Site navigation with dropdown content</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <NavigationMenu>
+                <NavigationMenuList>
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger>Getting Started</NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <ul className="grid gap-3 p-4 w-[400px]">
+                        <li>
+                          <NavigationMenuLink asChild>
+                            <a className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground" href="#">
+                              <div className="text-sm font-medium leading-none">Introduction</div>
+                              <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                                Re-usable components built using Radix UI and Tailwind CSS.
+                              </p>
+                            </a>
+                          </NavigationMenuLink>
+                        </li>
+                        <li>
+                          <NavigationMenuLink asChild>
+                            <a className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground" href="#">
+                              <div className="text-sm font-medium leading-none">Installation</div>
+                              <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                                How to install dependencies and structure your app.
+                              </p>
+                            </a>
+                          </NavigationMenuLink>
+                        </li>
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger>Components</NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <ul className="grid gap-3 p-4 w-[400px]">
+                        <li>
+                          <NavigationMenuLink asChild>
+                            <a className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground" href="#">
+                              <div className="text-sm font-medium leading-none">Button</div>
+                              <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                                Displays a button or a component that looks like a button.
+                              </p>
+                            </a>
+                          </NavigationMenuLink>
+                        </li>
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                </NavigationMenuList>
+              </NavigationMenu>
+            </CardContent>
+          </Card>
+        </AnimatedSection>
+
+        {/* Command Section */}
+        <AnimatedSection className="mb-12">
+          <h2 className="text-2xl font-semibold mb-6">Command</h2>
+          <Card>
+            <CardHeader>
+              <CardTitle>Command Palette</CardTitle>
+              <CardDescription>Search and command interface</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Command className="rounded-lg border shadow-md">
+                <CommandInput placeholder="Type a command or search..." />
+                <CommandList>
+                  <CommandEmpty>No results found.</CommandEmpty>
+                  <CommandGroup heading="Suggestions">
+                    <CommandItem>
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      <span>Calendar</span>
+                    </CommandItem>
+                    <CommandItem>
+                      <Settings className="mr-2 h-4 w-4" />
+                      <span>Settings</span>
+                    </CommandItem>
+                    <CommandItem>
+                      <User className="mr-2 h-4 w-4" />
+                      <span>Profile</span>
+                    </CommandItem>
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </CardContent>
+          </Card>
+        </AnimatedSection>
+
+        {/* Table Section */}
+        <AnimatedSection className="mb-12">
+          <h2 className="text-2xl font-semibold mb-6">Table</h2>
+          <Card>
+            <CardHeader>
+              <CardTitle>Table Component</CardTitle>
+              <CardDescription>Display tabular data with sorting, filtering, search, and pagination</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Search and Filter Controls */}
+              <div className="flex flex-col sm:flex-row gap-4">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search invoices..."
+                    value={tableSearch}
+                    onChange={(e) => setTableSearch(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+                <Select value={tableStatusFilter} onValueChange={setTableStatusFilter}>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Filter by status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Statuses</SelectItem>
+                    <SelectItem value="Paid">Paid</SelectItem>
+                    <SelectItem value="Pending">Pending</SelectItem>
+                    <SelectItem value="Unpaid">Unpaid</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Top Pagination */}
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-muted-foreground">
+                  Showing {paginatedInvoices.length} of {filteredInvoices.length} results
+                </p>
+                <Pagination>
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault()
+                          setTableCurrentPage(Math.max(1, tableCurrentPage - 1))
+                        }}
+                        className={tableCurrentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                      />
+                    </PaginationItem>
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                      <PaginationItem key={page}>
+                        <PaginationLink
+                          href="#"
+                          isActive={page === tableCurrentPage}
+                          onClick={(e) => {
+                            e.preventDefault()
+                            setTableCurrentPage(page)
+                          }}
+                        >
+                          {page}
+                        </PaginationLink>
+                      </PaginationItem>
+                    ))}
+                    <PaginationItem>
+                      <PaginationNext
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault()
+                          setTableCurrentPage(Math.min(totalPages, tableCurrentPage + 1))
+                        }}
+                        className={tableCurrentPage === totalPages ? "pointer-events-none opacity-50" : ""}
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              </div>
+
+              {/* Table */}
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[120px]">
+                      <Button
+                        variant="ghost"
+                        className="h-auto p-0 font-medium hover:bg-transparent"
+                        onClick={() => handleSort("id")}
+                      >
+                        Invoice
+                        {getSortIcon("id")}
+                      </Button>
+                    </TableHead>
+                    <TableHead>
+                      <Button
+                        variant="ghost"
+                        className="h-auto p-0 font-medium hover:bg-transparent"
+                        onClick={() => handleSort("status")}
+                      >
+                        Status
+                        {getSortIcon("status")}
+                      </Button>
+                    </TableHead>
+                    <TableHead>
+                      <Button
+                        variant="ghost"
+                        className="h-auto p-0 font-medium hover:bg-transparent"
+                        onClick={() => handleSort("method")}
+                      >
+                        Method
+                        {getSortIcon("method")}
+                      </Button>
+                    </TableHead>
+                    <TableHead className="text-right">
+                      <Button
+                        variant="ghost"
+                        className="h-auto p-0 font-medium hover:bg-transparent ml-auto"
+                        onClick={() => handleSort("amount")}
+                      >
+                        Amount
+                        {getSortIcon("amount")}
+                      </Button>
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {paginatedInvoices.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
+                        No invoices found.
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    paginatedInvoices.map((invoice) => (
+                      <TableRow key={invoice.id}>
+                        <TableCell className="font-medium">{invoice.id}</TableCell>
+                        <TableCell>
+                          <Badge
+                            variant={
+                              invoice.status === "Paid"
+                                ? "default"
+                                : invoice.status === "Pending"
+                                ? "outline"
+                                : "destructive"
+                            }
+                          >
+                            {invoice.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>{invoice.method}</TableCell>
+                        <TableCell className="text-right">${invoice.amount.toFixed(2)}</TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+
+              {/* Bottom Pagination */}
+              <div className="flex items-center justify-between pt-4">
+                <p className="text-sm text-muted-foreground">
+                  Page {tableCurrentPage} of {totalPages || 1}
+                </p>
+                <Pagination>
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault()
+                          setTableCurrentPage(Math.max(1, tableCurrentPage - 1))
+                        }}
+                        className={tableCurrentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                      />
+                    </PaginationItem>
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                      <PaginationItem key={page}>
+                        <PaginationLink
+                          href="#"
+                          isActive={page === tableCurrentPage}
+                          onClick={(e) => {
+                            e.preventDefault()
+                            setTableCurrentPage(page)
+                          }}
+                        >
+                          {page}
+                        </PaginationLink>
+                      </PaginationItem>
+                    ))}
+                    <PaginationItem>
+                      <PaginationNext
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault()
+                          setTableCurrentPage(Math.min(totalPages, tableCurrentPage + 1))
+                        }}
+                        className={tableCurrentPage === totalPages ? "pointer-events-none opacity-50" : ""}
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              </div>
+            </CardContent>
+          </Card>
+        </AnimatedSection>
+
+        {/* Carousel Section */}
+        <AnimatedSection className="mb-12">
+          <h2 className="text-2xl font-semibold mb-6">Carousel</h2>
+          <Card>
+            <CardHeader>
+              <CardTitle>Carousel Component</CardTitle>
+              <CardDescription>Slideshow with navigation controls</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Carousel className="w-full max-w-xs mx-auto">
+                <CarouselContent>
+                  {Array.from({ length: 5 }).map((_, index) => (
+                    <CarouselItem key={index}>
+                      <div className="p-1">
+                        <Card>
+                          <CardContent className="flex aspect-square items-center justify-center p-6">
+                            <span className="text-4xl font-semibold">{index + 1}</span>
+                          </CardContent>
+                        </Card>
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious />
+                <CarouselNext />
+              </Carousel>
+            </CardContent>
+          </Card>
+        </AnimatedSection>
+
+        {/* Aspect Ratio Section */}
+        <AnimatedSection className="mb-12">
+          <h2 className="text-2xl font-semibold mb-6">Aspect Ratio</h2>
+          <Card>
+            <CardHeader>
+              <CardTitle>Aspect Ratio Component</CardTitle>
+              <CardDescription>Maintain consistent width-to-height ratios</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="w-[300px]">
+                <AspectRatio ratio={16 / 9} className="bg-muted rounded-md flex items-center justify-center">
+                  <span className="text-muted-foreground">16:9 Aspect Ratio</span>
+                </AspectRatio>
+              </div>
+            </CardContent>
+          </Card>
+        </AnimatedSection>
+
+        {/* Scroll Area Section */}
+        <AnimatedSection className="mb-12">
+          <h2 className="text-2xl font-semibold mb-6">Scroll Area</h2>
+          <Card>
+            <CardHeader>
+              <CardTitle>Scroll Area Component</CardTitle>
+              <CardDescription>Custom scrollbar for overflow content</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ScrollArea className="h-[200px] w-full rounded-md border p-4">
+                <div className="space-y-4">
+                  {Array.from({ length: 20 }).map((_, i) => (
+                    <div key={i} className="text-sm">
+                      Item {i + 1} - This is scrollable content inside a scroll area component.
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
+            </CardContent>
+          </Card>
+        </AnimatedSection>
+
+        {/* Resizable Section */}
+        <AnimatedSection className="mb-12">
+          <h2 className="text-2xl font-semibold mb-6">Resizable</h2>
+          <Card>
+            <CardHeader>
+              <CardTitle>Resizable Panels</CardTitle>
+              <CardDescription>Drag to resize panel sections</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ResizablePanelGroup direction="horizontal" className="min-h-[200px] rounded-lg border">
+                <ResizablePanel defaultSize={50}>
+                  <div className="flex h-full items-center justify-center p-6">
+                    <span className="font-semibold">Panel One</span>
+                  </div>
+                </ResizablePanel>
+                <ResizableHandle withHandle />
+                <ResizablePanel defaultSize={50}>
+                  <div className="flex h-full items-center justify-center p-6">
+                    <span className="font-semibold">Panel Two</span>
+                  </div>
+                </ResizablePanel>
+              </ResizablePanelGroup>
+            </CardContent>
+          </Card>
         </AnimatedSection>
 
         {/* Alert Section */}
