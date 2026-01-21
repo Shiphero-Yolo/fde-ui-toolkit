@@ -1,6 +1,6 @@
 # FDE UI Toolkit - Components Index
 
-**Commit:** `c8b3c7436c0aaf1f0e8157aa6e7838f842419f64`
+**Commit:** `3c852e7cbc340cf04b4ca457fa8d04761a1d8f1d`
 **Date:** 2026-01-21
 **Framework:** Next.js 16.1.4, React 19, Tailwind CSS v4, Radix UI
 
@@ -107,6 +107,14 @@ import { useMobile, useToast } from "@/hooks"
 |-----------|------|---------|
 | **Accordion** | `components/ui/accordion/` | `Accordion`, `AccordionItem`, `AccordionTrigger`, `AccordionContent` |
 | **Collapsible** | `components/ui/collapsible/` | `Collapsible`, `CollapsibleContent`, `CollapsibleTrigger` |
+
+### Layout Components
+
+| Component | Path | Exports | Description |
+|-----------|------|---------|-------------|
+| **CollapsibleSidebar** | `components/ui/collapsible-sidebar/` | `CollapsibleSidebar`, `NavItem`, `NavSubItem`, `CollapsibleSidebarProps` | Collapsible navigation sidebar with hover expansion, mobile support, and contained mode for demos |
+| **SettingsPage** | `components/ui/settings-page/` | `SettingsPage`, `SettingsCard`, `SettingsSection`, `SettingsPageProps`, `SettingsCardProps`, `SettingsSectionProps` | Full settings page layout with tabs, loading states, and header content |
+| **ShipHeroCard** | `components/ui/settings-page/` | `ShipHeroCard`, `ShipHeroLogo`, `WebhookIcon`, `ShipHeroSettings`, `ShipHeroCardProps` | Integration card for ShipHero connection with OAuth, webhook management |
 
 ### Feedback
 
@@ -298,6 +306,30 @@ The `cn()` utility from `@/lib/utils` combines `clsx` and `tailwind-merge` for c
 
 ---
 
+## Showcase Page (`app/page.tsx`)
+
+The main page serves as a comprehensive component showcase with:
+
+### Features
+- **Two-Tab Layout**: Components and Layouts tabs
+- **Side Navigation Menu**: Quick access to all sections with collapsible categories
+- **Tab-Aware Navigation**: Clicking items switches to the correct tab automatically
+- **Scroll-to-Section**: Smooth scrolling with active indicator
+- **Go-to-Top Button**: Floating button appears after scrolling
+
+### Layout Demos
+1. **Dashboard Layout**: CollapsibleSidebar with navigation items, user footer
+2. **Settings Page Layout**: Full settings page with tabs, ShipHeroCard integration
+
+### Table Features
+The demo table includes:
+- Column sorting (click headers)
+- Category filtering (via Select)
+- Search functionality
+- Pagination (top and bottom)
+
+---
+
 ## Notes for AI Assistants
 
 1. **Import Pattern**: Always import from `@/components/ui` (barrel export)
@@ -306,3 +338,5 @@ The `cn()` utility from `@/lib/utils` combines `clsx` and `tailwind-merge` for c
 4. **Variants**: Use `variant` and `size` props where available
 5. **Refs**: All components forward refs properly
 6. **TypeScript**: Full type support with exported types
+7. **CollapsibleSidebar contained prop**: Use `contained={true}` for demo/preview contexts to avoid fixed positioning
+8. **ResizablePanelGroup**: Uses `orientation` prop (not `direction`)
