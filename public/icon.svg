@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- SR-71 Blackbird icon - simplified -->
+  <defs>
+    <linearGradient id="iconGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#525252"/>
+      <stop offset="100%" style="stop-color:#3d3d3d"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Main fuselage -->
+  <path
+    d="M16 3 L18.5 10 L19.5 12 L19 24 L17.5 27 L16 28 L14.5 27 L13 24 L12.5 12 L13.5 10 Z"
+    fill="url(#iconGradient)"
+    stroke="#ffffff"
+    stroke-width="0.5"
+  />
+
+  <!-- Left engine nacelle -->
+  <path
+    d="M12.5 12 L7 14 L6 16 L7 22 L9 24 L13 24 L12.5 12Z"
+    fill="url(#iconGradient)"
+    stroke="#ffffff"
+    stroke-width="0.5"
+  />
+
+  <!-- Right engine nacelle -->
+  <path
+    d="M19.5 12 L25 14 L26 16 L25 22 L23 24 L19 24 L19.5 12Z"
+    fill="url(#iconGradient)"
+    stroke="#ffffff"
+    stroke-width="0.5"
+  />
+
+  <!-- Left wing -->
+  <path
+    d="M13.5 10 L4 18 L5 20 L12.5 16 Z"
+    fill="url(#iconGradient)"
+    stroke="#ffffff"
+    stroke-width="0.5"
+  />
+
+  <!-- Right wing -->
+  <path
+    d="M18.5 10 L28 18 L27 20 L19.5 16 Z"
+    fill="url(#iconGradient)"
+    stroke="#ffffff"
+    stroke-width="0.5"
+  />
+</svg>

@@ -14,8 +14,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "FDE-UI-TOOLKIT - Component Library",
+  title: "Skunkworks UI",
   description: "A reusable React component design system",
+  icons: {
+    icon: "/icon.svg",
+  },
 };
 
 export default function RootLayout({

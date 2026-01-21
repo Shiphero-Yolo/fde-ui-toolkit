@@ -3,7 +3,28 @@
 import * as React from "react"
 import * as RadioGroupPrimitive from "@radix-ui/react-radio-group"
 import { Circle } from "lucide-react"
+import { animate } from "animejs"
 import { cn } from "@/lib/utils"
+
+/**
+ * Animated radio indicator
+ */
+const AnimatedRadioIndicator = () => {
+  const iconRef = React.useRef<SVGSVGElement>(null)
+
+  React.useEffect(() => {
+    if (iconRef.current) {
+      animate(iconRef.current, {
+        scale: [0, 1.2, 1],
+        opacity: [0, 1],
+        duration: 200,
+        ease: "outCubic",
+      })
+    }
+  }, [])
+
+  return <Circle ref={iconRef} className="h-2.5 w-2.5 fill-current text-current" />
+}
 
 /**
  * RadioGroup root component
@@ -37,7 +58,7 @@ RadioGroup.displayName = RadioGroupPrimitive.Root.displayName
 
 /**
  * RadioGroupItem component
- * Uses the primary color from the mandatory palette
+ * Uses the primary color from the mandatory palette with anime.js animation
  */
 const RadioGroupItem = React.forwardRef<
   React.ElementRef<typeof RadioGroupPrimitive.Item>,
@@ -53,7 +74,7 @@ const RadioGroupItem = React.forwardRef<
       {...props}
     >
       <RadioGroupPrimitive.Indicator className="flex items-center justify-center">
-        <Circle className="h-2.5 w-2.5 fill-current text-current" />
+        <AnimatedRadioIndicator />
       </RadioGroupPrimitive.Indicator>
     </RadioGroupPrimitive.Item>
   )

@@ -3,7 +3,28 @@
 import * as React from "react"
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox"
 import { Check } from "lucide-react"
+import { animate } from "animejs"
 import { cn } from "@/lib/utils"
+
+/**
+ * Animated check indicator
+ */
+const AnimatedCheckIndicator = () => {
+  const iconRef = React.useRef<SVGSVGElement>(null)
+
+  React.useEffect(() => {
+    if (iconRef.current) {
+      animate(iconRef.current, {
+        scale: [0, 1.2, 1],
+        opacity: [0, 1],
+        duration: 200,
+        ease: "outCubic",
+      })
+    }
+  }, [])
+
+  return <Check ref={iconRef} className="h-4 w-4" />
+}
 
 /**
  * Checkbox component built on Radix UI
@@ -31,7 +52,7 @@ const Checkbox = React.forwardRef<
     <CheckboxPrimitive.Indicator
       className={cn("flex items-center justify-center text-current")}
     >
-      <Check className="h-4 w-4" />
+      <AnimatedCheckIndicator />
     </CheckboxPrimitive.Indicator>
   </CheckboxPrimitive.Root>
 ))

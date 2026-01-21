@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <!-- SR-71 Blackbird plane only (no background) -->
+  <defs>
+    <linearGradient id="bodyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#525252"/>
+      <stop offset="100%" style="stop-color:#3d3d3d"/>
+    </linearGradient>
+    <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#6b6b6b"/>
+      <stop offset="100%" style="stop-color:#7a7a7a"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Main fuselage - sleek arrow shape -->
+  <path
+    d="M60 18 L68 45 L72 52 L70 85 L66 95 L60 100 L54 95 L50 85 L48 52 L52 45 Z"
+    fill="url(#bodyGradient)"
+    stroke="#ffffff"
+    stroke-width="1"
+  />
+
+  <!-- Left engine nacelle -->
+  <path
+    d="M48 52 L32 58 L28 62 L30 78 L36 85 L50 85 L48 52Z"
+    fill="url(#bodyGradient)"
+    stroke="#ffffff"
+    stroke-width="1"
+  />
+
+  <!-- Right engine nacelle -->
+  <path
+    d="M72 52 L88 58 L92 62 L90 78 L84 85 L70 85 L72 52Z"
+    fill="url(#bodyGradient)"
+    stroke="#ffffff"
+    stroke-width="1"
+  />
+
+  <!-- Left wing -->
+  <path
+    d="M52 45 L22 70 L24 74 L48 65 L48 52 Z"
+    fill="url(#bodyGradient)"
+    stroke="#ffffff"
+    stroke-width="1"
+  />
+
+  <!-- Right wing -->
+  <path
+    d="M68 45 L98 70 L96 74 L72 65 L72 52 Z"
+    fill="url(#bodyGradient)"
+    stroke="#ffffff"
+    stroke-width="1"
+  />
+
+  <!-- Cockpit highlight -->
+  <path
+    d="M60 24 L64 38 L60 42 L56 38 Z"
+    fill="url(#accentGradient)"
+    stroke="#ffffff"
+    stroke-width="0.5"
+  />
+
+  <!-- Engine intakes - left -->
+  <ellipse cx="38" cy="60" rx="4" ry="2" fill="#2d2d2d"/>
+
+  <!-- Engine intakes - right -->
+  <ellipse cx="82" cy="60" rx="4" ry="2" fill="#2d2d2d"/>
+
+  <!-- Center line detail -->
+  <line x1="60" y1="42" x2="60" y2="95" stroke="#6b6b6b" stroke-width="1"/>
+</svg>

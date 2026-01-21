@@ -1,13 +1,17 @@
 /**
- * FDE-UI-TOOLKIT - Component Library
+ * SKUNKWORKS UI - Component Library
  *
  * A reusable React component library built with:
  * - Radix UI primitives for accessibility
  * - Tailwind CSS for styling
  * - Class Variance Authority for variants
+ * - Anime.js for smooth animations
  *
  * All components use the MANDATORY color palette defined in globals.css
  */
+
+// Typography
+export * from "./typography"
 
 // Core Components
 export * from "./button"
