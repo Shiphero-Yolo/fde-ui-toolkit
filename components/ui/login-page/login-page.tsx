@@ -98,7 +98,7 @@ export function LoginPage({
         "relative z-10 w-full flex items-center justify-center",
         contained
           ? "p-4 lg:w-1/2 lg:justify-start lg:pl-8"
-          : "p-4 sm:p-6 md:p-8 lg:w-1/2 lg:justify-start lg:pl-16 lg:p-0 lg:py-8"
+          : "p-4 sm:p-6 md:p-8 lg:w-1/2 lg:justify-start lg:ml-8 lg:pl-16 lg:p-0 lg:py-8"
       )}>
         <div className={cn(
           "bg-white rounded-3xl w-full shadow-2xl",
