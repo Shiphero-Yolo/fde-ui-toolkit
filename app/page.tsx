@@ -171,8 +171,9 @@ import {
   ShipHeroCard,
   LoginPage,
   RankedListCard,
+  ScanLayout,
 } from "@/components/ui"
-import { AlertCircle, CheckCircle2, Copy, Check, Sun, Moon, ChevronDown, ChevronsUpDown, Bold, Italic, Underline, Calendar as CalendarIcon, Home, Settings, User, Mail, Plus, Minus, Search, ArrowUpDown, ArrowUp, ArrowDown, LayoutDashboard, Package, ShoppingCart, BarChart3, Bell, HelpCircle, LogOut, ChevronUp, PanelLeftClose, PanelLeft, Palette, Type, MousePointer, FormInput, LayoutList, Layers, MessageSquare, Grid3X3, Image as ImageIcon, SlidersHorizontal, Tag, LogIn, Trophy } from "lucide-react"
+import { AlertCircle, CheckCircle2, Copy, Check, Sun, Moon, ChevronDown, ChevronsUpDown, Bold, Italic, Underline, Calendar as CalendarIcon, Home, Settings, User, Mail, Plus, Minus, Search, ArrowUpDown, ArrowUp, ArrowDown, LayoutDashboard, Package, ShoppingCart, BarChart3, Bell, HelpCircle, LogOut, ChevronUp, PanelLeftClose, PanelLeft, Palette, Type, MousePointer, FormInput, LayoutList, Layers, MessageSquare, Grid3X3, Image as ImageIcon, SlidersHorizontal, Tag, LogIn, Trophy, ScanLine, Clipboard, FileCode, Terminal } from "lucide-react"
 import Image from "next/image"
 import { z } from "zod"
 
@@ -469,6 +470,299 @@ function ColorSwatch({ name, className, hex }: { name: string; className: string
   )
 }
 
+// Install command component with copy functionality
+function InstallCommand({ label, command }: { label: string; command: string }) {
+  const [copied, setCopied] = useState(false)
+
+  const copyToClipboard = async () => {
+    await navigator.clipboard.writeText(command)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  return (
+    <div className="space-y-1">
+      <p className="text-xs text-muted-foreground font-medium">{label}</p>
+      <div className="flex items-center gap-2 bg-muted rounded-md p-2 group">
+        <code className="flex-1 text-xs font-mono overflow-x-auto">{command}</code>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-7 w-7 shrink-0 opacity-50 group-hover:opacity-100 transition-opacity"
+          onClick={copyToClipboard}
+        >
+          {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+        </Button>
+      </div>
+    </div>
+  )
+}
+
+// Claude instructions component
+function ClaudeInstructions() {
+  const [copied, setCopied] = useState(false)
+
+  const claudeContent = `# UI Component Library Instructions
+
+## Overview
+This project uses the **fde-ui-toolkit** component library. All UI components should be imported from this library to ensure consistency.
+
+## Component Imports
+Always import components from the UI toolkit:
+\`\`\`tsx
+import {
+  Button,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+  Input,
+  Label,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  Badge,
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
+  Separator,
+  ScrollArea,
+  // ... and more
+} from "@/components/ui"
+\`\`\`
+
+## Mandatory Color Palette
+Use ONLY these CSS variables for colors. Never use hardcoded colors.
+
+### Color Constants (TypeScript)
+Import color constants for type-safe usage:
+\`\`\`tsx
+import { BG_COLORS, TEXT_COLORS, BORDER_COLORS } from "@/components/ui"
+
+// Use constants
+className={BG_COLORS.primary}  // "bg-primary"
+className={TEXT_COLORS.mutedForeground}  // "text-muted-foreground"
+\`\`\`
+
+### Background & Text
+- \`bg-background\` / \`text-foreground\` - Main background/text
+- \`bg-card\` / \`text-card-foreground\` - Card backgrounds
+- \`bg-muted\` / \`text-muted-foreground\` - Subdued elements
+
+### Interactive
+- \`bg-primary\` / \`text-primary-foreground\` - Primary actions
+- \`bg-secondary\` / \`text-secondary-foreground\` - Secondary actions
+- \`bg-accent\` / \`text-accent-foreground\` - Hover states
+- \`bg-destructive\` / \`text-destructive-foreground\` - Danger/error
+
+### Borders & Inputs
+- \`border-border\` - Default borders
+- \`border-input\` - Input borders
+- \`ring-ring\` - Focus rings
+
+### Charts
+- \`bg-chart-1\` through \`bg-chart-5\` - Chart colors
+
+## Typography Components
+Use typography components instead of raw HTML:
+\`\`\`tsx
+import { H1, H2, H3, Body, Caption, Muted } from "@/components/ui"
+
+<H1>Page Title</H1>
+<Body>Paragraph text</Body>
+<Muted>Secondary information</Muted>
+\`\`\`
+
+## Layout Components
+- \`LoginPage\` - Authentication pages
+- \`SettingsPage\` - Settings/preferences pages
+- \`ScanLayout\` - Barcode/QR scanning interfaces
+- \`CollapsibleSidebar\` - Navigation sidebars
+
+## Rules
+1. **Never create new UI components** - use existing ones from the library
+2. **Never use hardcoded colors** - always use CSS variables
+3. **Follow existing patterns** - check similar pages for reference
+4. **Use Lucide icons** - import from \`lucide-react\`
+5. **Prefer composition** - combine small components over creating new ones`
+
+  const copyToClipboard = async () => {
+    await navigator.clipboard.writeText(claudeContent)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  return (
+    <div className="relative">
+      <Button
+        variant="outline"
+        size="sm"
+        className="absolute top-2 right-2 z-10 gap-2"
+        onClick={copyToClipboard}
+      >
+        {copied ? <Check className="h-4 w-4" /> : <Clipboard className="h-4 w-4" />}
+        {copied ? "Copied!" : "Copy All"}
+      </Button>
+      <div className="bg-muted rounded-lg p-4 max-h-[400px] overflow-y-auto text-left">
+        <pre className="text-xs font-mono whitespace-pre-wrap text-left">{claudeContent}</pre>
+      </div>
+    </div>
+  )
+}
+
+// CSS Variables reference component
+function CSSVariablesReference() {
+  const [copied, setCopied] = useState<string | null>(null)
+
+  const copyVar = async (varName: string) => {
+    await navigator.clipboard.writeText(varName)
+    setCopied(varName)
+    setTimeout(() => setCopied(null), 1500)
+  }
+
+  const categories = [
+    {
+      title: "Background & Foreground",
+      description: "Main app backgrounds and text colors",
+      vars: [
+        { name: "--background", tailwind: "bg-background", desc: "Page background" },
+        { name: "--foreground", tailwind: "text-foreground", desc: "Primary text" },
+        { name: "--card", tailwind: "bg-card", desc: "Card backgrounds" },
+        { name: "--card-foreground", tailwind: "text-card-foreground", desc: "Card text" },
+        { name: "--popover", tailwind: "bg-popover", desc: "Popover/dropdown backgrounds" },
+        { name: "--popover-foreground", tailwind: "text-popover-foreground", desc: "Popover text" },
+      ]
+    },
+    {
+      title: "Interactive Elements",
+      description: "Buttons, links, and interactive states",
+      vars: [
+        { name: "--primary", tailwind: "bg-primary", desc: "Primary buttons/actions" },
+        { name: "--primary-foreground", tailwind: "text-primary-foreground", desc: "Text on primary" },
+        { name: "--secondary", tailwind: "bg-secondary", desc: "Secondary buttons" },
+        { name: "--secondary-foreground", tailwind: "text-secondary-foreground", desc: "Text on secondary" },
+        { name: "--accent", tailwind: "bg-accent", desc: "Hover/focus states" },
+        { name: "--accent-foreground", tailwind: "text-accent-foreground", desc: "Text on accent" },
+        { name: "--destructive", tailwind: "bg-destructive", desc: "Danger/delete actions" },
+        { name: "--destructive-foreground", tailwind: "text-destructive-foreground", desc: "Text on destructive" },
+      ]
+    },
+    {
+      title: "Muted & Subdued",
+      description: "Secondary text and subtle backgrounds",
+      vars: [
+        { name: "--muted", tailwind: "bg-muted", desc: "Subdued backgrounds" },
+        { name: "--muted-foreground", tailwind: "text-muted-foreground", desc: "Secondary/helper text" },
+      ]
+    },
+    {
+      title: "Borders & Inputs",
+      description: "Form elements and dividers",
+      vars: [
+        { name: "--border", tailwind: "border-border", desc: "Default borders" },
+        { name: "--input", tailwind: "border-input", desc: "Input field borders" },
+        { name: "--ring", tailwind: "ring-ring", desc: "Focus ring color" },
+      ]
+    },
+    {
+      title: "Charts",
+      description: "Data visualization colors",
+      vars: [
+        { name: "--chart-1", tailwind: "bg-chart-1", desc: "Chart color 1 (orange)" },
+        { name: "--chart-2", tailwind: "bg-chart-2", desc: "Chart color 2 (teal)" },
+        { name: "--chart-3", tailwind: "bg-chart-3", desc: "Chart color 3 (blue)" },
+        { name: "--chart-4", tailwind: "bg-chart-4", desc: "Chart color 4 (yellow)" },
+        { name: "--chart-5", tailwind: "bg-chart-5", desc: "Chart color 5 (orange)" },
+      ]
+    },
+    {
+      title: "Sidebar",
+      description: "Navigation sidebar specific colors",
+      vars: [
+        { name: "--sidebar-background", tailwind: "bg-sidebar", desc: "Sidebar background" },
+        { name: "--sidebar-foreground", tailwind: "text-sidebar-foreground", desc: "Sidebar text" },
+        { name: "--sidebar-primary", tailwind: "bg-sidebar-primary", desc: "Active sidebar item" },
+        { name: "--sidebar-accent", tailwind: "bg-sidebar-accent", desc: "Hover sidebar item" },
+        { name: "--sidebar-border", tailwind: "border-sidebar-border", desc: "Sidebar dividers" },
+      ]
+    },
+  ]
+
+  return (
+    <div className="space-y-6 max-h-[500px] overflow-y-auto pr-2">
+      {categories.map((category) => (
+        <div key={category.title}>
+          <h4 className="font-semibold text-sm mb-1">{category.title}</h4>
+          <p className="text-xs text-muted-foreground mb-3">{category.description}</p>
+          <div className="space-y-2">
+            {category.vars.map((v) => (
+              <div
+                key={v.name}
+                className="flex items-center gap-3 p-2 rounded-md bg-muted/50 hover:bg-muted transition-colors group"
+              >
+                <div
+                  className="w-6 h-6 rounded border shrink-0"
+                  style={{ backgroundColor: `hsl(var(${v.name}))` }}
+                />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <code className="text-xs font-mono truncate">{v.name}</code>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={() => copyVar(v.name)}
+                    >
+                      {copied === v.name ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+                    </Button>
+                  </div>
+                  <p className="text-xs text-muted-foreground truncate">{v.desc}</p>
+                </div>
+                <code className="text-xs font-mono text-muted-foreground hidden sm:block">{v.tailwind}</code>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+
+      <Separator />
+
+      <div>
+        <h4 className="font-semibold text-sm mb-2">Usage Examples</h4>
+        <div className="space-y-3 text-xs">
+          <div className="bg-muted p-3 rounded-md font-mono">
+            <p className="text-muted-foreground mb-1">{`/* In CSS */`}</p>
+            <p>{`background-color: hsl(var(--primary));`}</p>
+            <p>{`color: hsl(var(--primary-foreground));`}</p>
+          </div>
+          <div className="bg-muted p-3 rounded-md font-mono">
+            <p className="text-muted-foreground mb-1">{`{/* In Tailwind */}`}</p>
+            <p>{`<div className="bg-primary text-primary-foreground">`}</p>
+          </div>
+          <div className="bg-muted p-3 rounded-md font-mono">
+            <p className="text-muted-foreground mb-1">{`// With constants`}</p>
+            <p>{`import { BG_COLORS } from "@/components/ui"`}</p>
+            <p>{`<div className={BG_COLORS.primary}>`}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // Zod schema for form validation
 const formSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -690,7 +984,7 @@ export default function Showcase() {
 
   const scrollToSection = (sectionId: string) => {
     // Determine which tab the section belongs to
-    const layoutSections = ["dashboard-layout", "settings-layout", "login-page"]
+    const layoutSections = ["dashboard-layout", "settings-layout", "login-page", "scan-layout", "ranked-list"]
     const targetTab = layoutSections.includes(sectionId) ? "layouts" : "components"
 
     // Switch tab if needed
@@ -745,6 +1039,7 @@ export default function Showcase() {
     { id: "dashboard-layout", label: "Dashboard", icon: LayoutDashboard },
     { id: "settings-layout", label: "Settings Page", icon: Settings },
     { id: "login-page", label: "Login Page", icon: LogIn },
+    { id: "scan-layout", label: "Scan Layout", icon: ScanLine },
     { id: "ranked-list", label: "Ranked List", icon: Trophy },
   ]
 
@@ -870,14 +1165,95 @@ export default function Showcase() {
               {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             </Button>
             <SlipspaceLogo />
-          <h1 ref={titleRef} className="text-4xl font-bold tracking-tight mb-2 opacity-0">
+          <h1 ref={titleRef} className="text-4xl font-bold tracking-tight mb-1 opacity-0">
             Skunkworks UI
           </h1>
-          <code className="inline-block px-3 py-1 mb-4 text-sm font-mono bg-muted rounded-md border">370139c</code>
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <Badge variant="secondary" className="font-mono">v1.0.0</Badge>
+            <code className="inline-block px-3 py-1 text-sm font-mono bg-muted rounded-md border">370139c</code>
+          </div>
           <p ref={subtitleRef} className="text-muted-foreground text-lg max-w-2xl mx-auto opacity-0">
             A comprehensive, reusable React component library built with Radix UI,
             Tailwind CSS, and TypeScript. All components use the mandatory color palette.
           </p>
+
+          {/* Installation & Setup Section */}
+          <div className="mt-10 max-w-4xl mx-auto">
+            <Tabs defaultValue="install" className="w-full">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="install" className="flex items-center gap-2">
+                  <Terminal className="h-4 w-4" />
+                  Installation
+                </TabsTrigger>
+                <TabsTrigger value="css-vars" className="flex items-center gap-2">
+                  <Palette className="h-4 w-4" />
+                  CSS Variables
+                </TabsTrigger>
+                <TabsTrigger value="claude" className="flex items-center gap-2">
+                  <FileCode className="h-4 w-4" />
+                  CLAUDE.md
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="install" className="mt-4 text-left">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Install via Git Submodule</CardTitle>
+                    <CardDescription>Add fde-ui-toolkit to your project as a git submodule</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4 text-left">
+                    <InstallCommand
+                      label="Add submodule"
+                      command="git submodule add https://github.com/Shiphero-Yolo/fde-ui-toolkit.git components/ui-toolkit"
+                    />
+                    <InstallCommand
+                      label="Initialize (after clone)"
+                      command="git submodule update --init --recursive"
+                    />
+                    <InstallCommand
+                      label="Update to latest"
+                      command="git submodule update --remote components/ui-toolkit"
+                    />
+                    <Separator className="my-4" />
+                    <div className="text-sm text-muted-foreground">
+                      <p className="font-medium mb-2">Then import components:</p>
+                      <code className="block bg-muted p-3 rounded-md text-xs">
+                        {`import { Button, Card, Input } from "@/components/ui-toolkit/components/ui"`}
+                      </code>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="css-vars" className="mt-4 text-left">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">CSS Variables Reference</CardTitle>
+                    <CardDescription>
+                      These CSS variables are defined in <code className="bg-muted px-1 rounded">globals.css</code> and must be used for all colors
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="text-left">
+                    <CSSVariablesReference />
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="claude" className="mt-4 text-left">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Claude Code Instructions</CardTitle>
+                    <CardDescription>
+                      Copy this to your project&apos;s <code className="bg-muted px-1 rounded">CLAUDE.md</code> or <code className="bg-muted px-1 rounded">agents.md</code> file
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="text-left">
+                    <ClaudeInstructions />
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
+          </div>
         </div>
 
         {/* Main Content Tabs */}
@@ -2752,6 +3128,65 @@ export default function Showcase() {
                     </div>
                   </div>
                 </LoginPage>
+              </div>
+            </div>
+
+            {/* Scan Layout */}
+            <div id="scan-layout" className="scroll-mt-6">
+              <div className="mb-6">
+                <h2 className="text-2xl font-semibold">Scan Layout</h2>
+                <p className="text-muted-foreground">Full-screen scan layout for barcode/QR scanning workflows with auto-focusing input and status-based visual feedback.</p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Idle State */}
+                <div className="relative h-[280px] border rounded-lg overflow-hidden">
+                  <ScanLayout
+                    heading="Scan Item"
+                    title="Inventory"
+                    icon={<Package className="h-full w-full" />}
+                    placeholder="Scan barcode..."
+                    onScan={(value) => console.log("Scanned:", value)}
+                    autoFocus={false}
+                    contained
+                  />
+                </div>
+                {/* Success State */}
+                <div className="relative h-[280px] border rounded-lg overflow-hidden">
+                  <ScanLayout
+                    heading="Check In"
+                    status="success"
+                    icon={<User className="h-full w-full" />}
+                    placeholder="Scan badge..."
+                    onScan={(value) => console.log("Scanned:", value)}
+                    autoFocus={false}
+                    contained
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                {/* Error State */}
+                <div className="relative h-[280px] border rounded-lg overflow-hidden">
+                  <ScanLayout
+                    heading="Scan Package"
+                    status="error"
+                    errorMessage="Invalid barcode. Please try again."
+                    icon={<ShoppingCart className="h-full w-full" />}
+                    onScan={(value) => console.log("Scanned:", value)}
+                    autoFocus={false}
+                    contained
+                  />
+                </div>
+                {/* Loading State */}
+                <div className="relative h-[280px] border rounded-lg overflow-hidden">
+                  <ScanLayout
+                    heading="Processing"
+                    loading={true}
+                    loadingMessage="Verifying item..."
+                    onScan={(value) => console.log("Scanned:", value)}
+                    autoFocus={false}
+                    contained
+                  />
+                </div>
               </div>
             </div>
 

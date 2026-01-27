@@ -249,7 +249,7 @@ export function CollapsibleSidebar({
 
         {/* Footer */}
         {footer && (
-          <div className="mt-auto p-2 border-t">
+          <div className="mt-auto p-2">
             {typeof footer === "function"
               ? (footer as (props: { expanded: boolean }) => React.ReactNode)({
                   expanded: expanded || mobileMenuOpen,

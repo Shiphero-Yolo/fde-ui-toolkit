@@ -87,3 +87,7 @@ export * from "./generic-design-preview-new"
 export * from "./collapsible-sidebar"
 export * from "./settings-page"
 export * from "./login-page"
+export * from "./scan-layout"
+
+// Color Constants
+export * from "../../lib/colors"
